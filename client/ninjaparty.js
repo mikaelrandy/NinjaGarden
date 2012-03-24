@@ -56,18 +56,33 @@ this.fpsCounter = 128;
 this.fpsTimer = (new Date()).getTime();
 this.showFps = false;
 this.predictiveEngine = true;
+this.sounds = { 
+	open: "start.wav" ,
+	tambour: "tambour.wav",
+};
+this.sprites = {
+	ninja: {
+		tile: 16,
+		file: "images/sprite.png",
+		data: { Ninja: [0,3] }
+	}
+}
 
 
 this.initEngine = function() {
 	Crafty.init(this.mapWidth, this.mapHeight);
 	Crafty.background('url('+this.mapBackgroundImage+')');
 	this.loadSprites();
+	for (var i in this.sounds) {
+		Crafty.audio.add(i, this.sounds[i]);
+	}
 	this.loadCraftyCharacterComponent();
 };
 
 this.loadSprites = function() {
 	// temp sprite, waiting designer
-	Crafty.sprite(16, "images/sprite.png", { Ninja: [0,3] });
+	var ninja = this.sprites.ninja ;
+	Crafty.sprite(ninja.tile, ninja.file, ninja.data);
 };
 
 this.loadCraftyCharacterComponent = function () {
@@ -133,14 +148,18 @@ this.loadCraftyCharacterComponent = function () {
 	})
 };
 
+this.prepareGame = function (data) {
+	var countdown = data.count_down;
+	Crafty.audio.play("tambour");
+	this.loadEngineBindings();
+}
+
+
 this.initGame = function (frame) {
-
 	this.loadServerFrame(frame) ; 
-
 	this.remainingMilliseconds = 0;
 	this.lastStepTime = this.fpsTimer = this.startedTime = (new Date()).getTime() ;
-
-	this.loadEngineBindings();
+	Crafty.audio.play("open");
 };
 
 this.loadEngineBindings = function () {
