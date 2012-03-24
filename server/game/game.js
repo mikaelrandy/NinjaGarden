@@ -37,7 +37,11 @@ Game.prototype = {
 	},
 
 	addBot: function(bot) {
+		if( this.botStack.length >= (this.config.game.MAX_NINJA - this.config.game.NB_PLAYER) )
+			return false;
+
 		this.botStack.push(bot);
+		return true;
 	},
 };
 
