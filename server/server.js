@@ -101,19 +101,10 @@ function sendGameState(socket) {
 
         // game will start 
         case config.GameStates.READY:
-            socket.emit('game.start');
-            socket.broadcast.emit('game.start');
-
             // Milliseconds between game.ready and game.start
             count_down = config.Games.TIME_WAITING * 1000;
 
             // Inform client that game will soon start
-
-            // Load bots
-            var i = 1;
-            while (game.addBot(new Bot(new Character()))) {
-                console.log('Add bot ' + i++);
-            }
             utils.emitAll(socket, 'game.ready', {count_down: count_down});
 
             // Game will start in few second
