@@ -22,6 +22,7 @@ Game.prototype = {
 		this.timer 			= null;
 		this.director 		= null;
 		this.map 			= new Map(this.config);
+		this.socket 		= null;
 	},
 
 	addPlayer: function(player) {
@@ -54,14 +55,13 @@ Game.prototype = {
 		return datas;
 	},
 
-	prepareStart: function(socket) {
+	prepareStart: function(socket, utils) {
 		var i = 1;
         while (this.addBot(new Bot(new Character()))) {
             console.log('Add bot ' + i++);
         }
 
-        this.state = this.config.gameStates.STARTED;
- 
+
  		// define ninja stack
         this.ninjaStack = [];
         for(var i=0; i < this.playerStack.length; i++) {
@@ -71,31 +71,46 @@ Game.prototype = {
         	this.ninjaStack.push(this.botStack[i]);
         }
 
+		// load director
         this.director = new Director(this);
+        this.socket = socket;
 
+        // Send initial map state
+		this.sendMapUpdate();
 	},
 
-	start: function() {
+	start: function(socket, utils) {
 		this.gameStartTime	= new Date().getTime();
-		this.gameEndTime	= this.gameStartTime + this.config.Games.MAX_DURATION * 1000;
+		this.gameEndTime	= this.gameStartTime + this.config.game.MAX_DURATION * 1000;
+
+        this.state = this.config.gameStates.STARTED;
+
         this.timer = setInterval(this, 'processFrame', 30);
 	},
 
 	processFrame: function() {
 
 		this.director.processNewFrame();
+		this.sendMapUpdate();
+	},
 
+	sendMapUpdate: function() {
+        utils.emitAll(this.socket, 'map.update', this.getCurrentDatas());
+	},
+
+	getCurrentDatas: function() {
 		var ninjaDatas = {};
 		for(var i = 0; i < this.ninjaStack.length; i++) {
 			var character = this.ninjaStack[i].character;
 			ninjaDatas[character.id] = [character.x, character.y, character.dir, character.state, character.events];
 		}
 
-        utils.emitAll('update.map', {
+		return {
         	'ninjas': ninjaDatas,
         	'times' : {'current': this.getCurrentTime(), 'left': this.getTimeLeft()}
-        });
-	},
+        };
+	}
+
 
 	// return a time in milliseconds
 	getCurrentTime: function() {
