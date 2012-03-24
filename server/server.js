@@ -101,12 +101,31 @@ function sendGameState(socket) {
 
         // game will start 
         case config.GameStates.READY:
+            // Milliseconds between game.ready and game.start
+            count_down = config.Games.TIME_WAITING * 1000;
+
+            // Inform client that game will soon start
+            emitAll(socket, 'game.ready', {count_down: count_down});
+
+            // Load bots
             var i = 1;
             while (game.addBot(new Bot(new Character()))) {
                 console.log('Add bot ' + i++);
             }
-            socket.emit('game.start');
-            socket.broadcast.emit('game.start');
+
+            // Game will start in few second
+            setTimeout(function() {
+                emitAll(socket, 'game.start');
+            }, count_down); 
             break;
     }
+}
+
+/**
+ *  emit message trought broadcast transport AND origin 
+ */
+function emitAll(socket, eventname, datas)
+{
+    socket.emit(eventname, datas);
+    socket.broadcast.emit(eventname, datas);
 }
