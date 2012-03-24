@@ -78,7 +78,6 @@ Director.prototype = {
 
 					if(nbFoundPillar == this.game.map.pillars.length) {
 						player.character.addEvent(Config.Events.WIN);
-						// TODO: other notification
 						this.game.notifyWinner(player);
 					}
 				}
@@ -98,11 +97,24 @@ Director.prototype = {
 		ninja.character.addEvent(Config.Events.ATTACK);
 		ninja.character.state = null;	// a l'arret
 
-		var attackableNinjas = this.findNinjasNear(this.ninjaStack, ninja.character.x, ninja.character.y, Config.Dists.ATTACKABLE);
-		// TODO: filter list so that only ninja in front of the curent player get attacked
+		var attackableNinjas = {};
+		var ninjasInArea = this.findNinjasNear(this.ninjaStack, ninja.character.x, ninja.character.y, Config.Dists.ATTACKABLE);
+		
+		// filter list so that only ninja in front of the curent player get attacked
+		for(var i in ninjasInArea) {
+			var characterInArea = ninjasInArea[i].character;
+			if(	   ((ninja.character.dir & Config.Compass.N) && characterInArea.y >= ninja.character.y)
+				|| ((ninja.character.dir & Config.Compass.S) && characterInArea.y <= ninja.character.y)
+				|| ((ninja.character.dir & Config.Compass.E) && characterInArea.x >= ninja.character.x)
+				|| ((ninja.character.dir & Config.Compass.W) && characterInArea.x <= ninja.character.x) ) {
+				attackableNinjas[i] = ninjasInArea[i];
+			}
+		}
 	
 		for(var i in attackableNinjas) {
 			var attackedNinja = attackableNinjas[i];
+
+
 			// TODO: usefull? 
 			//attackedNinja.addEvent(Config.Events.ATTACKED);
 			if(typeof(attackedNinja) == 'Player') {

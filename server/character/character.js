@@ -8,8 +8,8 @@ Character = function () {
 
 Character.prototype = {
 	init: function() {
-		this.x = Utils.rand(Config.Dists.MAP_WIDTH);	// TODO: replace with max map coord
-		this.y = Utils.rand(Config.Dists.MAP_HEIGHT);	// TODO: replace with max map coord
+		this.x = Utils.rand(Config.Dists.MAP_WIDTH);
+		this.y = Utils.rand(Config.Dists.MAP_HEIGHT);
 		this.dir = this.getRandDir();
 		this.state = this.getRandState();
 		this.stats = {
