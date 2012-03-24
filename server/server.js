@@ -101,6 +101,9 @@ function sendGameState(socket) {
 
         // game will start 
         case config.GameStates.READY:
+            socket.emit('game.start');
+            socket.broadcast.emit('game.start');
+
             // Milliseconds between game.ready and game.start
             count_down = config.Games.TIME_WAITING * 1000;
 
@@ -117,6 +120,9 @@ function sendGameState(socket) {
             setTimeout(function() {
                 emitAll(socket, 'game.start');
             }, count_down); 
+
+            // Game start !
+            game.doStart(socket);
             break;
     }
 }
