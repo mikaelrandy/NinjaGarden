@@ -1,0 +1,14 @@
+function Config() {
+}
+
+Config.prototype = {
+	// *** Server
+	host: 	'192.168.1.201',
+	port: 	1337,
+	// *** Game
+	Card: 	{ N:1, E:2, S:4, W:8, NE:3, NW:9, SE:6, SW: 12},
+	States: { MOVING:1, STUNNED: 2, DEAD: 4 },
+	Events: { ATTACK:1, SMOKE:2 },
+	Times: 	{ NB_FRAME_SEC: 30,	STUN_DURATION: 5 }
+}
+exports.Config = Config;
