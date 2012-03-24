@@ -302,6 +302,14 @@ this.debugPosition = function () {
 };
 
 this.cheatAndFindOwnPlayer = function() {
+	if (this.player.cheated) {
+		this.player.color('rgba(255,0,0,0)');
+		this.player.cheated = false;
+	} else {
+		this.player.addComponent("Color");
+		this.player.color('rgb(255,0,0)');
+		this.player.cheated = true;
+	}
 	if (this.showDebug) console.log("CHEATING, my player is in red");
 };
 
