@@ -1,22 +1,28 @@
 // here ninja are either a bot or a player. both have a character entity
 Director = function(game) {
 	this.game = game;
+	this.init();
 }
 
 
 Director.prototype = {
+	init: function() {
+		this.ninjaStack = this.game.getNinjas();
+	},
+
 	// called by thegame manager
 	processNewFrame: function() {
 		var toProcess, movedPlayers = [];
 
 		// sort the decisions based on their priority
-		for(var id in this.game.ninjaStack) {
+		for(var i=0; i < this.ninjaStack.length; i++) {
+			var ninja = this.ninjaStack[i];
 			// do not process characters that can't move
-			if(!this.game.ninjaStack[id].character.canPlay()) {
+			if(!ninja.character.canPlay()) {
 				continue;
 			}
 
-			var current = {'ninja': this.game.ninjaStack[id], 'decision': ninja.getNextDecision()};
+			var current = {'ninja': ninja, 'decision': ninja.getNextDecision()};
 			if(decision.isEvent()) {
 				toProcess.push(current);
 			} else {
@@ -92,7 +98,7 @@ Director.prototype = {
 		ninja.character.addEvent(Config.Events.ATTACK);
 		ninja.character.state = null;	// a l'arret
 
-		var attackableNinjas = this.findNinjasNear(this.game.ninjaStack, ninja.character.x, ninja.character.y, Config.Dists.ATTACKABLE);
+		var attackableNinjas = this.findNinjasNear(this.ninjaStack, ninja.character.x, ninja.character.y, Config.Dists.ATTACKABLE);
 		// TODO: filter list so that only ninja in front of the curent player get attacked
 	
 		for(var i in attackableNinjas) {
@@ -121,7 +127,7 @@ Director.prototype = {
 	// return array
 	findNinjasNear: function(ninjaStack, x, y, maxDist) {
 		var found = {}, cmpMaxDist = maxDist * maxDist;
-		for(var i in ninjaStack) {
+		for(var i=0; i < ninjaStack.length; i++) {
 			var ninja = ninjaStack[i],
 				diffX = ninja.character.x - x,
 				diffY = ninja.character.y - y;
