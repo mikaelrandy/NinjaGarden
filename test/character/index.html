@@ -18,8 +18,9 @@
 		function takeDecisions() {
 			for( var i in bots) {
 				var bot = bots[i];
-				console.log(bot, bot.getNextDecision());
-				document.getElementById(i).innerHTML = '>'+bot.getNextDecision().dir;
+				var newDecision = bot.generateNewDecision();
+				console.log(bot, newDecision);
+				document.getElementById(i).innerHTML = '>'+newDecision.dir;
 			};
 		}
 
