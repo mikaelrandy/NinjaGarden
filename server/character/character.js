@@ -30,9 +30,24 @@ Character.prototype = {
 	},
 	getRandDir: function() {
 		var dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-		return Config.Card[dirs[rand(dirs.length - 1)]];
+		return Config.Compass[dirs[rand(dirs.length - 1)]];
 	},
 	getRandState: function() {
 		return rand(10) == 5 ? 0 : Config.States.MOVING;
+	},
+	continueMove: function() {
+		var step = Dists.STEP_PER_FRAME;
+		this.bounce();
+		if (this.dir & Compass.N) this.y -= step ;
+		else if (this.dir & Compass.S) this.y += step ;
+		if (this.dir & Compass.E) this.x += step ;
+		else if (this.dir & Compass.W) this.x -= step ;
+	},
+	// bounce against the border of the map
+	bounce: function() {
+		if ((this.dir & Compass.N) && this.y <= 0) this.dir = this.dir - Compass.N + Compass.S ;
+		else if ((this.dir & Compass.S) && this.y >= Config.Dists.MAP_HEIGHT - Config.Dists.PLAYER_HEIGHT) this.dir = this.dir - Compass.S + Compass.N ;
+		if ((this.dir & Compass.W) && this.x <= 0) this.dir = this.dir - Compass.W + Compass.E ;
+		else if ((this.dir & Compass.E) && this.x >= Config.Dists.MAP_WIDTH - Config.Dists.PLAYER_WIDTH) this.dir = this.dir - Compass.E + Compass.W ;		
 	}
 }
