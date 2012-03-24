@@ -8,18 +8,26 @@ Character = function () {
 
 Character.prototype = {
 	init: function() {
-		this.x = Utils.rand(0, 50);	// TODO: replace with max map coord
-		this.y = Utils.rand(0, 100);	// TODO: replace with max map coord
+		this.x = Utils.rand(Config.Dists.MAP_WIDTH);
+		this.y = Utils.rand(Config.Dists.MAP_HEIGHT);
 		this.dir = this.getRandDir();
 		this.state = this.getRandState();
 		this.stats = {
-			'kills' : {},
-			'smokes' : {},
-			'pillars' : {},
-			'stunts' : {}
+			'kills' :   [],
+			'smokes' :  [],
+			'pillars' : {},	// PillarId : Timestamp
+			'stunts' :  []
 		};
 		this.decisionStack = [];
 		this.events = [];
+	},
+	addEvent: function(eventName) {
+		this.events.push(eventName);
+
+		// TODO: need to be cleared after each export for client drawing
+	},
+	canPlay: function() {
+		return [Config.States.STUNNED, Config.States.DEAD].indexOf(this.state) == -1;
 	},
 	// clear decision stack with stun state
 	isStunned: function() {
@@ -30,6 +38,10 @@ Character.prototype = {
 
 		this.state = Config.States.STUNNED;
 	},
+	isDead: function() {
+		this.decisionStack = [];
+		this.state = Config.States.DEAD;
+	},
 	getRandDir: function() {
 		var dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 		return Config.Compass[dirs[Utils.rand(dirs.length - 1)]];
@@ -37,20 +49,26 @@ Character.prototype = {
 	getRandState: function() {
 		return Utils.rand(10) == 5 ? 0 : Config.States.MOVING;
 	},
+	// move!
 	continueMove: function() {
-		var step = Dists.STEP_PER_FRAME;
+		if(this.state != Config.States.MOVING) {
+			return;
+		}
+		var step = Config.Dists.STEP_PER_FRAME;
+
 		this.bounce();
-		if (this.dir & Compass.N) this.y -= step ;
-		else if (this.dir & Compass.S) this.y += step ;
-		if (this.dir & Compass.E) this.x += step ;
-		else if (this.dir & Compass.W) this.x -= step ;
+
+		if (this.dir & Config.Compass.N) this.y -= step ;
+		else if (this.dir & Config.Compass.S) this.y += step ;
+		if (this.dir & Config.Compass.E) this.x += step ;
+		else if (this.dir & Config.Compass.W) this.x -= step ;
 	},
 	// bounce against the border of the map
 	bounce: function() {
-		if ((this.dir & Compass.N) && this.y <= 0) this.dir = this.dir - Compass.N + Compass.S ;
-		else if ((this.dir & Compass.S) && this.y >= Config.Dists.MAP_HEIGHT - Config.Dists.PLAYER_HEIGHT) this.dir = this.dir - Compass.S + Compass.N ;
-		if ((this.dir & Compass.W) && this.x <= 0) this.dir = this.dir - Compass.W + Compass.E ;
-		else if ((this.dir & Compass.E) && this.x >= Config.Dists.MAP_WIDTH - Config.Dists.PLAYER_WIDTH) this.dir = this.dir - Compass.E + Compass.W ;		
+		if ((this.dir & Config.Compass.N) && this.y <= 0) this.dir = this.dir - Config.Compass.N + Config.Compass.S ;
+		else if ((this.dir & Config.Compass.S) && this.y >= Config.Dists.MAP_HEIGHT - Config.Dists.PLAYER_HEIGHT) this.dir = this.dir - Config.Compass.S + Config.Compass.N ;
+		if ((this.dir & Config.Compass.W) && this.x <= 0) this.dir = this.dir - Config.Compass.W + Config.Compass.E ;
+		else if ((this.dir & Config.Compass.E) && this.x >= Config.Dists.MAP_WIDTH - Config.Dists.PLAYER_WIDTH) this.dir = this.dir - Config.Compass.E + Config.Compass.W ;		
 	}
 }
 

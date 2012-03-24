@@ -16,6 +16,7 @@ Game.prototype = {
 	init: function() {
 		this.playerStack 	= [];
 		this.botStack		= [];
+		this.gameStartTime  = 0;
 		this.state 			= this.config.gameStates.AWAITING_PLAYERS;
 	},
 
@@ -43,6 +44,43 @@ Game.prototype = {
 		this.botStack.push(bot);
 		return true;
 	},
+
+	getNinjas: function() {
+		var datas = [this.botStack, this.playerStack];
+		return datas;
+	},
+
+	prepareStart: function(socket) {
+		var i = 1;
+        while (this.addBot(new Bot(new Character()))) {
+            console.log('Add bot ' + i++);
+        }
+
+        this.state = this.config.gameStates.STARTED;
+
+        var ninjas = this.getNinjas();
+        var updates = setInterval(function () {
+        	utils.emitAll('update.map', ninjas);
+	    }, 30, socket, ninjas);
+	},
+
+	start: function() {
+		this.gameStartTime	= new Date().getTime();
+		this.gameEndTime	= this.gameStartTime + this.config.Games.MAX_DURATION * 1000;
+	}
+
+	// return a time in milliseconds
+	getCurrentTime: function() {
+		return this.gameStartTime == 0 ? 0 : new Date().getTime() - this.gameStartTime;
+	},
+	// return a time in milliseconds
+	getTimeLeft: function() {
+		return this.gameEndTime == 0 ? 0 : this.gameEndTime - new Date().getTime();
+	},
+	// called by the directort (likely if a player got all pillars)
+	notifyWinner: function(winnerPlayer) {
+		// TODO: end the game
+	}
 };
 
 exports.Game = Game;
