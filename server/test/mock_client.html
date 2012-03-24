@@ -8,7 +8,7 @@
 
 		<ul>
 			<li>
-				<a href="#" id="event1">Event 1</a>
+				<a href="#" id="attack">Attack</a>
 			</li>
 			<li></li>
 			<li></li>
@@ -22,11 +22,17 @@
 
 				socket.on('refreshFrame', function() {
 					console.log('must refresh');
-				})
+				});
+
+				socket.on('inAttack', function() {
+					console.log('inAttack');
+				});
 			};
 
-			document.getElementById('event1').onclick = function() {
-				socket.emit('event1', { my: 'data' });
+			document.getElementById('attack').onclick = function() {
+				socket.emit('attack', {my: 'data', foo: 'bar'});
+
+				return false;
 			};
 		</script>
 	</body>

@@ -7,12 +7,11 @@ var remote_port = 1337;
 
 
 //*******
-//** Class event
+//** Class
 //*******
-function attack(socket) {
-    socket.broadcast.emit('refreshFrame');
-    console.log('attack !!!');
-}
+var PlayerInputEvent = require('./playerInputEvent').PlayerInputEvent;
+
+var player_input_event = new PlayerInputEvent();
 //*******
 
 
@@ -28,7 +27,8 @@ console.log('Server running at http://'+remote_host+':'+remote_port+'/');
 // Client behavior
 io.sockets.on('connection', function(socket) 
 {
-    socket.on('event1', function() { 
-        attack(socket);
+    socket.on('attack', function() { 
+        player_input_event.attack(socket);
     });
 });
+
