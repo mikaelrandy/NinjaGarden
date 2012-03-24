@@ -22,17 +22,17 @@ Character.prototype = {
 	// clear decision stack with stun state
 	isStunned: function() {
 		this.decisionStack = [{
-			'decision' : new Decision(States.STUNNED, null, null),
-			'duration' : Times.STUN_DURATION * Times.NB_FRAME_SEC
+			'decision' : new Decision(Config.States.STUNNED, null, null),
+			'duration' : Config.Times.STUN_DURATION * Config.Times.NB_FRAME_SEC
 		}];
 
-		this.state = States.STUNNED;
+		this.state = Config.States.STUNNED;
 	},
 	getRandDir: function() {
 		var dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-		return Card[dirs[rand(dirs.length - 1)]];
+		return Config.Card[dirs[rand(dirs.length - 1)]];
 	},
 	getRandState: function() {
-		return rand(10) == 5 ? 0 : States.MOVING;
+		return rand(10) == 5 ? 0 : Config.States.MOVING;
 	}
 }
