@@ -23,7 +23,7 @@ Director.prototype = {
 			}
 
 			var current = {'ninja': ninja, 'decision': ninja.getNextDecision()};
-			console.log(current);
+			//console.log(current);
 			if(current.decision.isEvent()) {
 				toProcess.push(current);
 			} else {
@@ -40,7 +40,8 @@ Director.prototype = {
 			}
 
 			// update char with basic info of the decision
-			if(typeof(current.decision) == 'Decision') {
+			//console.log(typeof(current.decision));
+			if(typeof(current.decision) == 'object') {
 				current.ninja.character.dir = current.decision.dir;
 				current.ninja.character.state = current.decision.state;
 			}
@@ -55,7 +56,7 @@ Director.prototype = {
 				default:
 					this.computeNextPosition(current.ninja, current.decision);
 					// list players that have moved
-					if(typeof(current.ninja) == 'Player') {
+					if(current.ninja.type == 'player') {
 						movedPlayers.push(current.ninja);
 					}
 					break;
@@ -88,7 +89,7 @@ Director.prototype = {
 
 	// compute new position from the character
 	computeNextPosition: function(ninja, decision) {
-		// update character with last decsiion and make him move
+		// update character with last decision and make him move
 		ninja.character.continueMove();
 	},
 
@@ -115,7 +116,7 @@ Director.prototype = {
 		for(var i in attackableNinjas) {
 			var attackedNinja = attackableNinjas[i];
 
-			if(typeof(attackedNinja) == 'Player') {
+			if(attackedNinja.type == 'player') {
 				attackedNinja.character.isDead(); 
 				attackedNinja.character.addEvent(Config.Events.IS_DEAD);
 
@@ -141,7 +142,7 @@ Director.prototype = {
 			var ninja = ninjaStack[i],
 				diffX = ninja.character.x - x,
 				diffY = ninja.character.y - y;
-			if(ninja.character.canMove() && diffX * diffX + diffY * diffY <= cmpMaxDist) {
+			if(ninja.character.canPlay() && diffX * diffX + diffY * diffY <= cmpMaxDist) {
 				found[minja.id] = ninja; 
 			}
 		}

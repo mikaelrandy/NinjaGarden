@@ -1,4 +1,5 @@
 Bot = function(character) {
+	this.type = 'bot';
 	this.character = character;
 	this.init();
 }

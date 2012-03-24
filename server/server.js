@@ -56,7 +56,8 @@ io.sockets.on('connection', function(socket) {
 
         // Reset game ()
         socket.on('game.reset', function() {
-            game.init();
+            game.stop();
+            game = new Game(config.GameStates, config.Games);
             game.addPlayer(new Player(new Character(), socket.id));
             sendGameState(socket);
         });
@@ -72,7 +73,7 @@ io.sockets.on('connection', function(socket) {
     if( !game.addPlayer(new Player(new Character())) ) {
         socket.emit('game.cannot_join')
         // If player cannot join, avoid all event connection
-        return false;
+        //return false;
     }
     
     // Send initial map state

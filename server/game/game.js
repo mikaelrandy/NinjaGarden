@@ -26,6 +26,13 @@ Game.prototype = {
 		this.socket 		= null;
 	},
 
+	stop: function() {
+
+		if( this.timer != null )
+			this.timer.clear;
+		
+	},	
+
 	addPlayer: function(player) {
 		// Is the game full ?
 		if( this.playerStack.length >= this.config.game.NB_PLAYER )
@@ -86,7 +93,7 @@ Game.prototype = {
 
         this.state = this.config.gameStates.STARTED;
 
-var that = this;
+		var that = this;
         this.timer = setInterval(function(){ that.processFrame() }, 30);
 	},
 
