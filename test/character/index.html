@@ -11,9 +11,10 @@
 	<script type="text/javascript">
 		function init() {
 			for(var i=0; i< 10; i++) {
-				bots[i] = new Bot(new Character(i));
+				var character = new Bot(new Character());
+				bots[character.id] = character;
 				var debug = document.createElement('div');
-				debug.id = i;
+				debug.id = character.id;
 				document.body.appendChild(debug);
 			}
 		}

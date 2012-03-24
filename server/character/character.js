@@ -26,7 +26,7 @@ Character.prototype = {
 	},
 	canPlay: function() {
 		return [Config.States.STUNNED, Config.States.DEAD].indexOf(this.state) == -1;
-	}
+	},
 	// clear decision stack with stun state
 	isStunned: function() {
 		this.decisionStack = [{
