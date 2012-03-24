@@ -13,13 +13,11 @@ var utils = require('./utils').Utils;
 //*******
 //** Class
 //*******
-var PlayerInputEvent    = require('./playerInputEvent').PlayerInputEvent;
 var Game                = require('./game/game').Game;
 var Character           = require('./character/character').Character;
 var Bot                 = require('./character/bot').Bot;
 var Player              = require('./character/player').Player;
 
-var player_input_event  = new PlayerInputEvent();
 var game                = new Game(config.GameStates, config.Games);
 //*******
 
@@ -76,9 +74,9 @@ io.sockets.on('connection', function(socket) {
     // Client is now connected, send him game state
     sendGameState(socket);
 
-    // Event on player
-    socket.on('attack', function() { 
-        player_input_event.attack(socket);
+    // Event on player (player.action)
+    socket.on('player.action', function(data) { 
+
     });
 });
 
