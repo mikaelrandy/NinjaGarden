@@ -67,7 +67,7 @@ this.initEngine = function() {
 
 this.loadSprites = function() {
 	// temp sprite, waiting designer
-	Crafty.sprite(16, "images/sprite.png", { ninja: [0,3] });
+	Crafty.sprite(16, "images/sprite.png", { Ninja: [0,3] });
 };
 
 this.loadCraftyCharacterComponent = function () {
@@ -96,7 +96,11 @@ this.loadCraftyCharacterComponent = function () {
 			else if (this.dir & Compass.W) this.x -= step ;
 		},
 		init: function() {
-			this.addComponent("2D, "+renderingMode);
+			this.addComponent("2D, "+renderingMode+", Ninja, SpriteAnimation");
+			this.animate("walk_left", 6, 3, 8)
+				.animate("walk_right", 9, 3, 11)
+				.animate("walk_up", 3, 3, 5)
+				.animate("walk_down", 0, 3, 2);
 		},
 		changeDirection: function (newdir) {
 			this.dir = newdir;
@@ -104,49 +108,27 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		updateAnimation: function()
 		{
-			switch (this.dir) {
-				case Compass.N :
-				case Compass.N + Compass.E:
-				case Compass.N + Compass.W:
-					if(!this.isPlaying('walk_up'))
-					{
-						this.stop().animate("walk_up", 15, -1);
-					}
-					break;
-				case Compass.S :
-				case Compass.S + Compass.W:
-				case Compass.S + Compass.E:	
-					if(!this.isPlaying('walk_down'))
-					{
-						this.stop().animate("walk_down", 15, -1);
-					}
-					break;
-				case Compass.W :		
-					if(!this.isPlaying('walk_left'))
-					{	
-						this.stop().animate("walk_left", 15, -1);
-					}
-					break;
-				case Compass.E :
-					if(!this.isPlaying('walk_right'))
-					{	
-						this.stop().animate("walk_right", 15, -1);
-					}
-					break;
-				default: 
-					this.stop();
-					break;
+			if (this.dir & Compass.N) {
+				if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 15, -1);
+			} else if (this.dir & Compass.S) {
+				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 15, -1);
+			} else if (this.dir & Compass.W) {		
+				if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 15, -1);
+			} else if (this.dir & Compass.E) {
+				if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 15, -1);
+			} else {
+				this.stop();
 			}
 		},
 
 		changeState: function (newstate) {
 			this.state = newstate ;
 		},
+		
 		attack: function () {
-
 		},
+		
 		smoke: function () {
-
 		}
 	})
 };
@@ -213,7 +195,7 @@ this.loadServerPlayers = function (players) {
 	var playerWidth = this.playerHeight;
 	players.forEach( function (data, i) {
 		if (! ninjaParty.characters[i]) {
-			ninjaParty.characters[i] = Crafty.e("Character, 2D, Canvas, ninja, SpriteAnimation")
+			ninjaParty.characters[i] = Crafty.e("Character")
 				.attr( { 
 						x: data.x, 
 						y: data.y, 
@@ -222,10 +204,6 @@ this.loadServerPlayers = function (players) {
 						dir: data.dir, 
 						state: data.state
 				})
-				.animate("walk_left", 6, 3, 8)
-				.animate("walk_right", 9, 3, 11)
-				.animate("walk_up", 3, 3, 5)
-				.animate("walk_down", 0, 3, 2)
 		} else {
 			var c = ninjaParty.characters[i] ;
 			c.move(c.x, c.y);
