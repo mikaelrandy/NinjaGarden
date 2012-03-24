@@ -62,8 +62,7 @@ Game.prototype = {
 
         var ninjas = this.getNinjas();
         var updates = setInterval(function () {
-        	socket.emit('update.map', ninjas);
-	        socket.broadcast.emit('update.map', ninjas);
+        	utils.emitAll('update.map', ninjas);
 	    }, 30, socket, ninjas);
 	},
 
