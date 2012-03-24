@@ -240,7 +240,11 @@ this.loadServerPlayers = function (players) {
 				})
 		} else {
 			var c = ninjaParty.characters[i] ;
+			console.log("previous position = " + c.x + " , " + c.y ) ;
+			console.log("new position = " + data.x + " , " + data.y ) ;
 			c.isAt(data.x, data.y);
+			c.x = data.x ;
+			c.y = data.y ;
 			if (i != ninjaParty.playerId) c.direction = data.direction ;
 			c.state = data.state ;
 		}
