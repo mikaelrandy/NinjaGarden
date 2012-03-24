@@ -2,8 +2,9 @@ Config = {
 	// *** Server
 	host: 	'192.168.1.201',
 	port: 	1337,
+	debug: 	false,
 	// *** Params
-	Games: 		{ NB_PLAYER: 4, MAX_NINJA: 30, MAX_DURATION: 180 },
+	Games: 		{ NB_PLAYER: 4, MAX_NINJA: 30, TIME_WAITING: 5, MAX_DURATION: 180 },
 	// *** Constants
 	GameStates: { STOPPED: 1, READY: 2, STARTED: 3, AWAITING_PLAYERS: 4 },
 	Compass: { N:1, E:2, S:4, W:8, NE:3, NW:9, SE:6, SW: 12},
