@@ -1,13 +1,15 @@
-Character = function (id) {
-	this.id = id;
+var counter = 1;
+
+Character = function () {
+	this.id = counter++;
 	this.init();
 }
 
 
 Character.prototype = {
 	init: function() {
-		this.x = rand(0, 50);	// TODO: replace with max map coord
-		this.y = rand(0, 100);	// TODO: replace with max map coord
+		this.x = Utils.rand(0, 50);	// TODO: replace with max map coord
+		this.y = Utils.rand(0, 100);	// TODO: replace with max map coord
 		this.dir = this.getRandDir();
 		this.state = this.getRandState();
 		this.stats = {
@@ -30,9 +32,11 @@ Character.prototype = {
 	},
 	getRandDir: function() {
 		var dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-		return Config.Card[dirs[rand(dirs.length - 1)]];
+		return Config.Card[dirs[Utils.rand(dirs.length - 1)]];
 	},
 	getRandState: function() {
-		return rand(10) == 5 ? 0 : Config.States.MOVING;
+		return Utils.rand(10) == 5 ? 0 : Config.States.MOVING;
 	}
 }
+
+exports.Character = Character;

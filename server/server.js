@@ -5,10 +5,19 @@ var config = require('./config').Config;
 //*******
 
 //*******
+//** Utils
+//*******
+var utils = require('./utils').Utils;
+//*******
+
+//*******
 //** Class
 //*******
 var PlayerInputEvent    = require('./playerInputEvent').PlayerInputEvent;
 var Game                = require('./game/game').Game;
+var Character           = require('./character/character').Character;
+var Bot                 = require('./character/bot').Bot;
+var Player              = require('./character/player').Player;
 
 var player_input_event  = new PlayerInputEvent();
 var game                = new Game(config.GameStates, config.Games);
@@ -40,11 +49,11 @@ console.log('Server running at http://'+config.host+':'+config.port+'/');
 // Client behavior
 io.sockets.on('connection', function(socket) {
     // Check if player can join the game
-    if( !game.addPlayer(socket.id) ) {
+    if( !game.addPlayer(new Player(new Character())) ) {
         socket.emit('game.cannot_join')
         return false;
     }
-    
+
     // After player connection, handle the
     switch(game.state)
     {
@@ -55,7 +64,7 @@ io.sockets.on('connection', function(socket) {
 
         // game will start 
         case config.GameStates.READY:
-            // TODO : Do stuff to start game
+            // TODO: add bot
             break;
     }
 

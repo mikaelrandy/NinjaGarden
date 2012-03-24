@@ -15,10 +15,11 @@ Game.prototype = {
 		this.config.gameStates 	= gameStatesConfig;
 		
 		this.playerStack 	= [];
+		this.botStack		= [];
 		this.state 			= this.config.gameStates.AWAITING_PLAYERS;
 	},
 
-	addPlayer: function(id) {
+	addPlayer: function(player) {
 		// Is the game full ?
 		if( this.playerStack.length >= this.config.game.NB_PLAYER )
 			return false;
@@ -27,12 +28,16 @@ Game.prototype = {
 		if( this.state == this.config.gameStates.STARTED )
 			return false;
 
-		this.playerStack.push(id);
+		this.playerStack.push(player);
 
 		if( this.playerStack.length >= this.config.game.NB_PLAYER )
 			this.state = this.config.gameStates.READY;
 
 		return true;
+	},
+
+	addBot: function(bot) {
+		this.botStack.push(bot);
 	},
 };
 

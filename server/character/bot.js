@@ -41,3 +41,5 @@ Bot.prototype = {
 		});
 	}
 }
+
+exports.Bot = Bot;
