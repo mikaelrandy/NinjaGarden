@@ -1,5 +1,6 @@
-Player = function(character) {
+Player = function(character, socketid) {
 	this.character = character;
+	this.socketid = socketid;
 	this.init();
 }
 

@@ -55,7 +55,7 @@ io.sockets.on('connection', function(socket) {
         // Reset game ()
         socket.on('game.reset', function() {
             game.init();
-            game.addPlayer(new Player(new Character()));
+            game.addPlayer(new Player(new Character(), socket.id));
             sendGameState(socket);
         });
 
