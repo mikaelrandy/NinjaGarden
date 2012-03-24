@@ -13,13 +13,15 @@ var utils = require('./utils').Utils;
 //*******
 //** Class
 //*******
-var PlayerInputEvent    = require('./playerInputEvent').PlayerInputEvent;
 var Game                = require('./game/game').Game;
 var Character           = require('./character/character').Character;
 var Bot                 = require('./character/bot').Bot;
 var Player              = require('./character/player').Player;
+var Map                 = require('./map/map').Map;
+var Pillar              = require('./map/pillar').Pillar;
+var Director            = require('./decision/director').Director;
+var Decision            = require('./decision/decision').Decision;
 
-var player_input_event  = new PlayerInputEvent();
 var game                = new Game(config.GameStates, config.Games);
 //*******
 
@@ -55,7 +57,7 @@ io.sockets.on('connection', function(socket) {
         // Reset game ()
         socket.on('game.reset', function() {
             game.init();
-            game.addPlayer(new Player(new Character()));
+            game.addPlayer(new Player(new Character(), socket.id));
             sendGameState(socket);
         });
 
@@ -73,12 +75,24 @@ io.sockets.on('connection', function(socket) {
         return false;
     }
     
+    // Send initial map state
+    socket.emit('map.init', {
+        config: {
+            maps: {
+                'height': config.Dists.MAP_HEIGHT,
+                'width':  config.Dists.MAP_WIDTH
+            }
+        },
+        state: []
+    });
+    // 
+
     // Client is now connected, send him game state
     sendGameState(socket);
 
-    // Event on player
-    socket.on('attack', function() { 
-        player_input_event.attack(socket);
+    // Event on player (player.action)
+    socket.on('player.action', function(data) { 
+
     });
 });
 
@@ -110,11 +124,11 @@ function sendGameState(socket) {
             // Game will start in few second
             setTimeout(function() {
                 utils.emitAll(socket, 'game.start');
-                game.start();
-            }, count_down); 
+                game.start(socket, utils);
+            }, count_down);
 
             // Game start !
-            game.prepartStart(socket);
+            game.prepareStart(socket, utils);
             break;
     }
 }

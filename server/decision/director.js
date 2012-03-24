@@ -7,12 +7,12 @@ Director = function(game) {
 
 Director.prototype = {
 	init: function() {
-		this.ninjaStack = this.game.getNinjas();
+		this.ninjaStack = this.game.ninjaStack;
 	},
 
 	// called by thegame manager
 	processNewFrame: function() {
-		var toProcess, movedPlayers = [];
+		var toProcess = [], movedPlayers = [];
 
 		// sort the decisions based on their priority
 		for(var i=0; i < this.ninjaStack.length; i++) {
@@ -23,7 +23,8 @@ Director.prototype = {
 			}
 
 			var current = {'ninja': ninja, 'decision': ninja.getNextDecision()};
-			if(decision.isEvent()) {
+			console.log(current);
+			if(current.decision.isEvent()) {
 				toProcess.push(current);
 			} else {
 				toProcess.unshift(current);
@@ -114,9 +115,6 @@ Director.prototype = {
 		for(var i in attackableNinjas) {
 			var attackedNinja = attackableNinjas[i];
 
-
-			// TODO: usefull? 
-			//attackedNinja.addEvent(Config.Events.ATTACKED);
 			if(typeof(attackedNinja) == 'Player') {
 				attackedNinja.character.isDead(); 
 				attackedNinja.character.addEvent(Config.Events.IS_DEAD);
@@ -151,3 +149,6 @@ Director.prototype = {
 		return found;
 	}
 }
+
+
+exports.Director = Director;

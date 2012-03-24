@@ -58,8 +58,8 @@ this.fpsTimer = (new Date()).getTime();
 this.showFps = false;
 this.predictiveEngine = false;
 this.sounds = { 
-	open: "start.wav" ,
-	tambour: "tambour.wav",
+	open: "start2.wav" ,
+	tambour: "start.wav",
 };
 this.sprites = {
 	ninja: {
@@ -314,6 +314,14 @@ this.debugPosition = function () {
 };
 
 this.cheatAndFindOwnPlayer = function() {
+	if (this.player.cheated) {
+		this.player.color('rgba(255,0,0,0)');
+		this.player.cheated = false;
+	} else {
+		this.player.addComponent("Color");
+		this.player.color('rgb(255,0,0)');
+		this.player.cheated = true;
+	}
 	if (this.showDebug) console.log("CHEATING, my player is in red");
 };
 
