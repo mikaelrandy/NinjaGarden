@@ -1,5 +1,5 @@
-function buildRandomFrame(ninjaParty) {
-	var randomPlayersNumber = 50 ;
+function buildRandomFrame(ninjaParty, randomPlayersNumber) {
+	randomPlayersNumber = randomPlayersNumber || 50 ;
 	var players = [ ] ;
 	var w = ninjaParty.mapWidth;
 	var h = ninjaParty.mapHeight;

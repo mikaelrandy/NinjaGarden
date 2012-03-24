@@ -54,7 +54,7 @@ function NinjaPartyController(messagePlaceHolder) {
 	}
 
 	this.startGame = function(data) {
-		var fakeFrame = buildRandomFrame(this.ninjaParty) ;
+		var fakeFrame = buildRandomFrame(this.ninjaParty, 100) ;
 		this.ninjaParty.initGame(fakeFrame) ;
 	}
 	
