@@ -111,7 +111,7 @@ Game.prototype = {
 		var ninjaDatas = {};
 		for(var i = 0; i < this.ninjaStack.length; i++) {
 			var character = this.ninjaStack[i].character;
-			ninjaDatas[character.id] = [character.x, character.y, character.dir, character.state, character.events];
+			ninjaDatas[character.id] = [character.x, character.y, character.dir, character.state, character.events, character.stats];
 			character.clearEvents();
 		}
 
