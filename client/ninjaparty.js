@@ -49,8 +49,8 @@ this.endTime = null;
 this.mapBackgroundImage = "floor.jpg";
 this.mapHeight = 640;
 this.mapWidth = 960;
-this.playerHeight = 20;
-this.playerWidth = 16;
+this.playerHeight = 40;
+this.playerWidth = 40;
 this.renderingMode = "Canvas";
 this.fpsCounter = 128;
 this.fpsTimer = (new Date()).getTime();
@@ -67,7 +67,7 @@ this.initEngine = function() {
 
 this.loadSprites = function() {
 	// temp sprite, waiting designer
-	Crafty.sprite(16, "images/sprite.png", { Ninja: [0,3] });
+	Crafty.sprite(40, "images/sprites/ninja.png", { Ninja: [0,3] });
 };
 
 this.loadCraftyCharacterComponent = function () {
@@ -96,11 +96,13 @@ this.loadCraftyCharacterComponent = function () {
 			else if (this.dir & Compass.W) this.x -= step ;
 		},
 		init: function() {
+			// bas haut droite gauche
 			this.addComponent("2D, "+renderingMode+", Ninja, SpriteAnimation");
-			this.animate("walk_left", 6, 3, 8)
-				.animate("walk_right", 9, 3, 11)
-				.animate("walk_up", 3, 3, 5)
-				.animate("walk_down", 0, 3, 2);
+			this.animate("walk_down", 0, 0, 2)
+				.animate("walk_up", 0, 1, 2)
+				.animate("walk_right", 0, 2, 2)
+				.animate("walk_left", 0, 3, 2)
+			;
 		},
 		changeDirection: function (newdir) {
 			this.dir = newdir;
@@ -193,7 +195,7 @@ this.loadServerPlayers = function (players) {
 	var ninjaParty = this;
 	var playerHeight = this.playerHeight;
 	var playerWidth = this.playerHeight;
-	players.forEach( function (data, i) {
+	players.forEach( function (data, i) debug{
 		if (! ninjaParty.characters[i]) {
 			ninjaParty.characters[i] = Crafty.e("Character")
 				.attr( { 
@@ -281,13 +283,6 @@ this.debugPosition = function () {
 };
 
 this.cheatAndFindOwnPlayer = function() {
-	if (this.player.old_color) {
-		this.player.color(this.player.old_color) ;
-		this.player.old_color = false;
-	} else {
-		this.player.old_color = this.player.color() ;
-		this.player.color('rgb(255,0,0)');
-	}
 	if (this.showDebug) console.log("CHEATING, my player is in red");
 };
 
