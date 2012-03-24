@@ -1,13 +1,34 @@
-var http    = require('http');
-var io      = require('socket.io');
-
-var app     = http.createServer();
-
-app.listen(1337, '192.168.1.37');
-io.listen(app);
-console.log('Server running at http://192.168.1.37:1337/');
+//*******
+//** Configuration
+//*******
+var remote_host = '192.168.1.60';
+var remote_port = 1337;
+//*******
 
 
-/*io.sockets.on('connection', function(socket) {
-    console.log('Event connnection');
-});*/
+//*******
+//** Class event
+//*******
+function attack(socket) {
+    socket.broadcast.emit('refreshFrame');
+    console.log('attack !!!');
+}
+//*******
+
+
+// Servers initialisation
+var http    = require('http').createServer();
+var socket  = require('socket.io');
+
+// Server listening
+var app = http.listen(remote_port, remote_host);
+var io  = socket.listen(app);
+console.log('Server running at http://'+remote_host+':'+remote_port+'/');
+
+// Client behavior
+io.sockets.on('connection', function(socket) 
+{
+    socket.on('event1', function() { 
+        attack(socket);
+    });
+});
