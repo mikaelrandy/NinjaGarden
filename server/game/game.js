@@ -50,24 +50,27 @@ Game.prototype = {
 		return datas;
 	},
 
-	prepareStart: function(socket) {
+	prepareStart: function(socket, utils) {
 		var i = 1;
         while (this.addBot(new Bot(new Character()))) {
             console.log('Add bot ' + i++);
         }
 
+        // Send initial map state
+        utils.emitAll(socket, 'map.update', this.getNinjas());
+	},
+
+	start: function(socket, utils) {
+		this.gameStartTime	= new Date().getTime();
+		this.gameEndTime	= this.gameStartTime + this.config.game.MAX_DURATION * 1000;
+
         this.state = this.config.gameStates.STARTED;
 
         var ninjas = this.getNinjas();
         var updates = setInterval(function () {
-        	utils.emitAll('update.map', ninjas);
+        	utils.emitAll(socket, 'map.update', ninjas);
 	    }, 30, socket, ninjas);
 	},
-
-	start: function() {
-		this.gameStartTime	= new Date().getTime();
-		this.gameEndTime	= this.gameStartTime + this.config.Games.MAX_DURATION * 1000;
-	}
 
 	// return a time in milliseconds
 	getCurrentTime: function() {
