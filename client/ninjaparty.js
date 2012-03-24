@@ -59,7 +59,12 @@ this.predictiveEngine = true;
 this.initEngine = function() {
 	Crafty.init(this.mapWidth, this.mapHeight);
 	Crafty.background('url('+this.mapBackgroundImage+')');
+	this.loadSprites();
 	this.loadCraftyCharacterComponent();
+};
+
+this.loadSprites = function() {
+	Crafty.sprite(16, "images/sprite.png", { ninja: [0,3] });
 };
 
 this.loadCraftyCharacterComponent = function () {
@@ -87,7 +92,7 @@ this.loadCraftyCharacterComponent = function () {
 		init: function() {
 			this.addComponent("2D, "+renderingMode+", Color");
 		}
-	});	
+	})
 };
 
 this.initGame = function (frame) {
@@ -152,8 +157,7 @@ this.loadServerPlayers = function (players) {
 	var playerWidth = this.playerHeight;
 	players.forEach( function (data, i) {
 		if (! ninjaParty.characters[i]) {
-			ninjaParty.characters[i] = Crafty.e("Character")
-				.color('rgb(0,0,0)')
+			ninjaParty.characters[i] = Crafty.e("Character, 2D, Canvas, ninja, SpriteAnimation")
 				.attr( { 
 						x: data.x, 
 						y: data.y, 
@@ -161,7 +165,13 @@ this.loadServerPlayers = function (players) {
 						h: ninjaParty.playerHeight, 
 						dir: data.dir, 
 						state: data.state
-				} );
+				})
+				.animate("walk_left", 6, 3, 8)
+				.animate("walk_right", 9, 3, 11)
+				.animate("walk_up", 3, 3, 5)
+				.animate("walk_down", 0, 3, 2)
+				.animate("walk_down", 15, -1)
+				;
 		} else {
 			var c = ninjaParty.characters[i] ;
 			c.move(c.x, c.y);
