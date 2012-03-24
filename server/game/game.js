@@ -19,7 +19,6 @@ Game.prototype = {
 		this.gameStartTime  = 0;
 		this.state 			= this.config.gameStates.AWAITING_PLAYERS;
 		// TODO: move this in the real start method
-		this.gameStartTime	= new Date().getTime();
 	},
 
 	addPlayer: function(player) {
@@ -52,7 +51,7 @@ Game.prototype = {
 		return datas;
 	},
 
-	doStart: function(socket) {
+	prepareStart: function(socket) {
 		var i = 1;
         while (this.addBot(new Bot(new Character()))) {
             console.log('Add bot ' + i++);
@@ -65,6 +64,10 @@ Game.prototype = {
         	utils.emitAll('update.map', ninjas);
 	    }, 30, socket, ninjas);
 	},
+
+	start: function() {
+		this.gameStartTime	= new Date().getTime();
+	}
 
 	// return a time in milliseconds
 	getCurrentGameTime: function() {

@@ -110,10 +110,11 @@ function sendGameState(socket) {
             // Game will start in few second
             setTimeout(function() {
                 utils.emitAll(socket, 'game.start');
+                game.start();
             }, count_down); 
 
             // Game start !
-            game.doStart(socket);
+            game.prepartStart(socket);
             break;
     }
 }
