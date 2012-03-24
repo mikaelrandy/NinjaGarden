@@ -92,6 +92,7 @@ function sendGameState(socket) {
         case config.GameStates.READY:
             // TODO: add bot
             socket.emit('game.start');
+            socket.broadcast.emit('game.start');
             break;
     }
 }
