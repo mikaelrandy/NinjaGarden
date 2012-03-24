@@ -3,7 +3,7 @@ Config = {
 	host: 	'192.168.1.201',
 	port: 	1337,
 	// *** Params
-	Games: 		{ NB_PLAYER: 4 },
+	Games: 		{ NB_PLAYER: 4, MAX_NINJA: 30 },
 	// *** Constants
 	GameStates: { STOPPED: 1, READY: 2, STARTED: 3, AWAITING_PLAYERS: 4 },
 	Compass: { N:1, E:2, S:4, W:8, NE:3, NW:9, SE:6, SW: 12},
