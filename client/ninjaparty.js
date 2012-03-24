@@ -49,8 +49,8 @@ this.endTime = null;
 this.mapBackgroundImage = "floor.jpg";
 this.mapHeight = 640;
 this.mapWidth = 960;
-this.playerHeight = 20;
-this.playerWidth = 16;
+this.playerHeight = 40;
+this.playerWidth = 40;
 this.renderingMode = "Canvas";
 this.fpsCounter = 128;
 this.fpsTimer = (new Date()).getTime();
@@ -62,8 +62,8 @@ this.sounds = {
 };
 this.sprites = {
 	ninja: {
-		tile: 16,
-		file: "images/sprite.png",
+		tile: 40,
+		file: "images/sprites/ninja.png",
 		data: { Ninja: [0,3] }
 	}
 }
@@ -81,7 +81,7 @@ this.initEngine = function() {
 
 this.loadSprites = function() {
 	// temp sprite, waiting designer
-	var ninja = this.sprites.ninja ;
+	var ninja = this.sprites.ninja;
 	Crafty.sprite(ninja.tile, ninja.file, ninja.data);
 };
 
@@ -111,11 +111,13 @@ this.loadCraftyCharacterComponent = function () {
 			else if (this.dir & Compass.W) this.x -= step ;
 		},
 		init: function() {
+			// bas haut droite gauche
 			this.addComponent("2D, "+renderingMode+", Ninja, SpriteAnimation");
-			this.animate("walk_left", 6, 3, 8)
-				.animate("walk_right", 9, 3, 11)
-				.animate("walk_up", 3, 3, 5)
-				.animate("walk_down", 0, 3, 2);
+			this.animate("walk_down", 0, 0, 2)
+				.animate("walk_up", 0, 1, 2)
+				.animate("walk_right", 0, 2, 2)
+				.animate("walk_left", 0, 3, 2)
+			;
 		},
 		changeDirection: function (newdir) {
 			this.dir = newdir;
