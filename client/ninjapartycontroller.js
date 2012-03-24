@@ -21,6 +21,11 @@ function NinjaPartyController(messagePlaceHolder) {
 
 	this.initGame = function (NinjaParty) {
 		this.ninjaParty = new NinjaParty() ;
+		this.ninjaParty.mapHeight = data.config.maps.height ;
+		this.ninjaParty.mapWidth = data.config.maps.width ;
+		this.ninjaParty.sendActionToServer = function (data) {
+			ninjaPartyController.sendActionToServer(action, data) ;
+		}
 		this.ninjaParty.initEngine() ;
 		this.displayFeedback(this.messages['engine.start']) ;
 	}
@@ -63,7 +68,7 @@ function NinjaPartyController(messagePlaceHolder) {
 
 	this.startGame = function(data) {
 		var fakeFrame = buildRandomFrame(this.ninjaParty, 100) ;
-		this.ninjaParty.initGame(fakeFrame) ;
+		this.ninjaParty.initGame() ;
 	}
 	
 }

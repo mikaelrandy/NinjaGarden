@@ -157,10 +157,10 @@ this.prepareGame = function (data) {
 }
 
 
-this.initGame = function (frame) {
-	this.loadServerFrame(frame) ; 
+this.initGame = function () {
 	this.remainingMilliseconds = 0;
 	this.lastStepTime = this.fpsTimer = this.startedTime = (new Date()).getTime() ;
+	console.log("play !");
 	Crafty.audio.play("open");
 };
 
@@ -214,7 +214,13 @@ this.loadServerPlayers = function (players) {
 	var ninjaParty = this;
 	var playerHeight = this.playerHeight;
 	var playerWidth = this.playerHeight;
-	players.forEach( function (data, i) {
+	for (var i in players) {
+		var data = players[i] ;
+		data.x = data[0];
+		data.y = data[1];
+		data.direction = data[2];
+		data.state = data[3];
+		data.events = data[4];
 		if (! ninjaParty.characters[i]) {
 			ninjaParty.characters[i] = Crafty.e("Character")
 				.attr( { 
@@ -227,8 +233,8 @@ this.loadServerPlayers = function (players) {
 				})
 		} else {
 			var c = ninjaParty.characters[i] ;
-			c.move(c.x, c.y);
-			if (i != ninjaParty.playerId) c.dir = data.dir ;
+			c.isAt(data.x, data.y);
+			if (i != ninjaParty.playerId) c.direction = data.direction ;
 			c.state = data.state ;
 		}
 		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.dir) ;
