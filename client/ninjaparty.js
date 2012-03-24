@@ -57,8 +57,8 @@ this.fpsTimer = (new Date()).getTime();
 this.showFps = false;
 this.predictiveEngine = true;
 this.sounds = { 
-	open: "start.wav" ,
-	tambour: "tambour.wav",
+	open: "start2.wav" ,
+	tambour: "start.wav",
 };
 this.sprites = {
 	ninja: {
