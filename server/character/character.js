@@ -4,6 +4,6 @@ function character() {
 
 character.prototype = {
 	init: function() {
-
+		this.x = 15;
 	}
 }
