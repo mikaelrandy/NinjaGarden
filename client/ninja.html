@@ -16,10 +16,13 @@
 
 <script>
 var placeHolder = document.getElementById("feedback") ;
-var ctrl = new NinjaPartyController(placeHolder) ;
-ctrl.initGame(NinjaParty) ;
+var ctrl = new NinjaPartyController(NinjaParty, placeHolder) ;
 
 window.onload = function() {
+	if (window.io == undefined) {
+		placeHolder.innerHTML = "Vous êtes vraiment un ninja ? le portier vous bloque l'accès, <a href=''>vous voulez tenter de forcer le passage ?</a>" ;
+		return;
+	}
 	setTimeout(function() {
 		console.log("onload");
 		var socket = io.connect('http://192.168.1.60:1337')  ;
