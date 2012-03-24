@@ -71,6 +71,18 @@ io.sockets.on('connection', function(socket) {
         return false;
     }
     
+    // Send initial map state
+    socket.emit('map.init', {
+        config: {
+            maps: {
+                'height': config.Dists.MAP_HEIGHT,
+                'width':  config.Dists.MAP_WIDTH
+            }
+        },
+        state: []
+    });
+    // 
+
     // Client is now connected, send him game state
     sendGameState(socket);
 
@@ -109,7 +121,7 @@ function sendGameState(socket) {
             setTimeout(function() {
                 utils.emitAll(socket, 'game.start');
                 game.start(socket, utils);
-            }, count_down); 
+            }, count_down);
 
             // Game start !
             game.prepareStart(socket, utils);
