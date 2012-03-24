@@ -26,6 +26,13 @@ Game.prototype = {
 		this.socket 		= null;
 	},
 
+	stop: function() {
+
+		if( this.timer != null )
+			this.timer.clear;
+		
+	},	
+
 	addPlayer: function(player) {
 		// Is the game full ?
 		if( this.playerStack.length >= this.config.game.NB_PLAYER )
