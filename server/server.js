@@ -72,7 +72,6 @@ io.sockets.on('disconnect', function(socket) {
 
 
 function sendGameState(socket) {
-    console.log(game.state);
     // After player connection, handle the
     switch(game.state)
     {
@@ -87,4 +86,4 @@ function sendGameState(socket) {
             // TODO : Do stuff to start game
             break;
     }
-}
+]
