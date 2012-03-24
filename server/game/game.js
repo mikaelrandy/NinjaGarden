@@ -16,7 +16,10 @@ Game.prototype = {
 	init: function() {
 		this.playerStack 	= [];
 		this.botStack		= [];
+		this.gameStartTime  = 0;
 		this.state 			= this.config.gameStates.AWAITING_PLAYERS;
+		// TODO: move this in the real start method
+		this.gameStartTime	= new Date().getTime();
 	},
 
 	addPlayer: function(player) {
@@ -43,6 +46,14 @@ Game.prototype = {
 		this.botStack.push(bot);
 		return true;
 	},
+	// return a time in milliseconds
+	getCurrentGameTime: function() {
+		return this.gameStartTime == 0 ? 0 : new Date().getTime() - this.gameStartTime;
+	},
+	// called by the directort (likely if a player got all pillars)
+	notifyWinner: function(winnerPlayer) {
+		// TODO: end the game
+	}
 };
 
 exports.Game = Game;

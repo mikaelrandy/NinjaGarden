@@ -61,8 +61,8 @@ Director.prototype = {
 			var playersInArea = this.findNinjasNear(movedPlayers, pillar.x, pillar.y, Config.Dists.PILLAR_AREA);
 			for(var j in playersInArea) {
 				var player = playersInArea[j];
-				if(typeof(player.characters.stats.pillars[pillar.id]) == 'undefined') {
-					player.characters.stats.pillars[pillar.id] = this.game.currentTime;
+				if(typeof(player.character.stats.pillars[pillar.id]) == 'undefined') {
+					player.character.stats.pillars[pillar.id] = this.game.getCurrentGameTime();
 					player.character.addEvent(Config.Events.GET_PILLAR);
 
 					var nbFoundPillar = 0;
@@ -73,7 +73,7 @@ Director.prototype = {
 					if(nbFoundPillar == this.game.map.pillars.length) {
 						player.character.addEvent(Config.Events.WIN);
 						// TODO: other notification
-						// this.game.notifyWinner(player);
+						this.game.notifyWinner(player);
 					}
 				}
 			}
