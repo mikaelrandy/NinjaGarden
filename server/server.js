@@ -46,7 +46,7 @@ var app = http.listen(config.port, config.host);
 var io  = socket.listen(app);
 console.log('Server running at http://'+config.host+':'+config.port+'/');
 
-// Client behavior
+// On client connection, check game state and connect him
 io.sockets.on('connection', function(socket) {
     // Reset game
     socket.on('game.reset', function() {
@@ -58,9 +58,11 @@ io.sockets.on('connection', function(socket) {
     // Check if player can join the game
     if( !game.addPlayer(new Player(new Character())) ) {
         socket.emit('game.cannot_join')
+        // If player cannot join, avoid all event connection
         return false;
     }
     
+    // Client is now connected, send him game state
     sendGameState(socket);
 
     // Event on player
@@ -74,11 +76,14 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
+// On client disconnection
 io.sockets.on('disconnect', function(socket) {
     // TODO : kill player but keep game started
 });
 
-
+/**
+ *  Regarding game state, send some event to clients
+ */
 function sendGameState(socket) {
     // After player connection, handle the
     switch(game.state)
