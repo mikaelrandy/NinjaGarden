@@ -5,17 +5,17 @@ Config = {
 	// *** Params
 	Games: 		{ NB_PLAYER: 4 },
 	// *** Constants
-	GameStates: { STOPPED: 1, READY: 2, STARTED: 3, AWAITING_PLAYERS: 4 }
+	GameStates: { STOPPED: 1, READY: 2, STARTED: 3, AWAITING_PLAYERS: 4 },
 	Compass: { N:1, E:2, S:4, W:8, NE:3, NW:9, SE:6, SW: 12},
 	States: { MOVING:1, STUNNED: 2, DEAD: 4 },
-	Events: { ATTACK:1, SMOKE:2 },
+	Events: { ATTACK:1, SMOKE:2, IS_DEAD: 3, IS_STUNNED: 4 },
 	Times: 	{ NB_FRAME_SEC: 30,	STUN_DURATION: 5 },
 	Dists:  { 
 		MAP_HEIGHT: 640, MAP_WIDTH:  960,
 		PLAYER_HEIGHT: 20, PLAYER_WIDTH: 16,
-		PILLAR_HEIGHT: 30, PILLAR_WIDTH: 16,
+		PILLAR_HEIGHT: 30, PILLAR_WIDTH: 16, PILLAR_AREA: 30
 		STEP_PER_FRAME: 5, 
-		ATTACKABLE: 10
+		ATTACKABLE: 30
 	}
 }
 

@@ -10,7 +10,7 @@
 	<script type="text/javascript" src="../../server/character/bot.js"></script>
 	<script type="text/javascript">
 		function init() {
-			for(var i=0; i< 1; i++) {
+			for(var i=0; i< 10; i++) {
 				bots[i] = new Bot(new Character(i));
 				var debug = document.createElement('div');
 				debug.id = i;
@@ -22,15 +22,24 @@
 			for( var i in bots) {
 				var bot = bots[i];
 				var newDecision = bot.getNextDecision();
-				console.log(bot, newDecision);
+				//console.log(bot, newDecision);
 				document.getElementById(i).innerHTML = '>'+newDecision.dir;
+			};
+		}
+
+		function move() {
+			for( var i in bots) {
+				var bot = bots[i];
+				var newDecision = bot.character.continueMove();
+				//console.log(bot.id, bot.character.x, bot.character.y, bot.character.dir);
+				document.getElementById(i).innerHTML = bot.character.id+': '+ bot.character.x+', '+ bot.character.y+', '+ bot.character.dir;
 			};
 		}
 
 		window.onload = function() {
 			init();
 			setInterval(function() {
-				takeDecisions();
+				move();
 			}, parseInt(1000 / Config.Times.NB_FRAME_SEC));
 		}
 		

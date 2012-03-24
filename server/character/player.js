@@ -25,9 +25,9 @@ Player.prototype = {
 		return timedDecision.decision;
 	},
 	addNewDecision: function(decision) {
-		newDecisionEntry = {
+		var newDecisionEntry = {
 			'decision' : decision,
-			'duration' : 1;
+			'duration' : 1
 		}
 
 		if(decision.isEvent()) {
