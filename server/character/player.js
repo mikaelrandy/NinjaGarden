@@ -1,4 +1,5 @@
 Player = function(character, socketid) {
+	this.type = 'player';
 	this.character = character;
 	this.socketid = socketid;
 	this.init();

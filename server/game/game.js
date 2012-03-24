@@ -93,7 +93,7 @@ Game.prototype = {
 
         this.state = this.config.gameStates.STARTED;
 
-var that = this;
+		var that = this;
         this.timer = setInterval(function(){ that.processFrame() }, 30);
 	},
 
