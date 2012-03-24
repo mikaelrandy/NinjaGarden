@@ -1,4 +1,6 @@
-function NinjaParty() {
+function NinjaParty(socket) {
+
+this.socket = socket ;
 
 // Constantes
 this.Compass = { N:1, E:2, S:4, W:8, NE:3, NW:9, SE:6, SW: 12};

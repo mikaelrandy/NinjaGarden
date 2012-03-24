@@ -39,12 +39,39 @@ console.log('Server running at http://'+config.host+':'+config.port+'/');
 
 // Client behavior
 io.sockets.on('connection', function(socket) {
+    // Reset game
+    socket.on('game.reset', function() {
+        console.log('game.reset');
+        game.init();
+        game.addPlayer(socket.id);
+        sendGameState(socket);
+    });
+
     // Check if player can join the game
     if( !game.addPlayer(socket.id) ) {
         socket.emit('game.cannot_join')
         return false;
     }
     
+    sendGameState(socket);
+
+    // Event on player
+    socket.on('attack', function() { 
+        player_input_event.attack(socket);
+    });
+
+    // Send event defined by client (for debug purpoise )
+    socket.on('debug.ask', function(data) {
+        socket.emit(data[0], data[1]);
+    });
+});
+
+io.sockets.on('disconnect', function(socket) {
+    // TODO : kill player but keep game started
+});
+
+
+function sendGameState(socket) {
     // After player connection, handle the
     switch(game.state)
     {
@@ -55,22 +82,8 @@ io.sockets.on('connection', function(socket) {
 
         // game will start 
         case config.GameStates.READY:
+            socket.emit('game.start');
             // TODO : Do stuff to start game
             break;
     }
-
-    // Event on player
-    socket.on('attack', function() { 
-        player_input_event.attack(socket);
-    });
-
-    // Send event defined by client (for debug purpoise )
-    socket.on('debug.ask', function(data) {
-        socket.emit(data[0], data[1]);
-    })
-});
-
-
-io.sockets.on('disconnect', function(socket) {
-    // TODO : kill player but keep game started
-})
+]
