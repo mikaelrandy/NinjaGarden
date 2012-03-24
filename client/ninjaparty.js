@@ -70,6 +70,7 @@ this.loadCraftyCharacterComponent = function () {
 	var mapWidth = this.mapWidth ;
 	var playerHeight = this.playerHeight;
 	var playerWidth = this.playerWidth;
+	var showDebug = this.showDebug ;
 	Crafty.c("Character", {
 		state: States.MOVING ,
 		bounce: function() {
@@ -86,6 +87,18 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		init: function() {
 			this.addComponent("2D, "+renderingMode+", Color");
+		},
+		changeDirection: function (newdir) {
+			this.dir = newdir;
+		},
+		changeState: function (newstate) {
+			this.state = newstate ;
+		},
+		attack: function () {
+
+		},
+		smoke: function () {
+
 		}
 	});	
 };
@@ -161,13 +174,15 @@ this.loadServerPlayers = function (players) {
 						h: ninjaParty.playerHeight, 
 						dir: data.dir, 
 						state: data.state
-				} );
+				} );	
 		} else {
 			var c = ninjaParty.characters[i] ;
 			c.move(c.x, c.y);
 			if (i != ninjaParty.playerId) c.dir = data.dir ;
 			c.state = data.state ;
 		}
+		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.dir) ;
+		ninjaParty.characters[i].changeState(data.state) ;
 	}) ;
 };
 
@@ -196,7 +211,7 @@ this.changeDirection = function (dir) {
 		console.log("new direction '"+dir+"' (old was '"+((!this.player) ? 'unknown' : this.player.dir)+"')")
 	}
 	this.currentDir = dir ;
-	if (this.player) this.player.dir = dir ;
+	if (this.player) this.player.changeDirection(dir) ;
 };
 
 this.getInputForPersistantDirection = function (key) {
@@ -217,7 +232,7 @@ this.addPersistentDirection = function (dir, opposite) {
 	var madir = this.currentDir;
 	if (madir & opposite) madir -= opposite ;
 	else if (((madir & dir) == 0)) madir += dir ;
-	if (!this.player || (this.player.dir != madir)) changeDirection(madir) ;
+	if (!this.player || (this.player.dir != madir)) this.changeDirection(madir) ;
 };
 
 this.getInputForActions = function (key) {
@@ -249,10 +264,12 @@ this.cheatAndFindOwnPlayer = function() {
 
 this.attack = function () {
 	if (this.showDebug) console.log("Attack ! (from me)") ;	
+	if (this.player) this.player.attack() ;
 };
 
 this.smoke = function () {
 	if (this.showDebug) console.log("Smoke ! (from me)") ;	
+	if (this.player) this.player.smoke() ;
 };
 
 this.getSteps = function(t, f) {
