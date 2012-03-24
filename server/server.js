@@ -90,10 +90,7 @@ function sendGameState(socket) {
 
         // game will start 
         case config.GameStates.READY:
-            var i = 1;
-            while (game.addBot(new Bot(new Character()))) {
-                console.log('Add bot ' + i++);
-            }
+            game.doStart(socket);
             socket.emit('game.start');
             socket.broadcast.emit('game.start');
             break;
