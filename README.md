@@ -1,4 +1,4 @@
-# NinjaCamp
+# NinjaGarden
 
 Projet de la team Ninja pour la GameDevParty 2012
 
