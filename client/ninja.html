@@ -20,9 +20,11 @@ var ctrl = new NinjaPartyController(placeHolder) ;
 ctrl.initGame(NinjaParty) ;
 
 window.onload = function() {
-	console.log("onload");
-	var socket = io.connect('http://192.168.1.60:1337')  ;
-	ctrl.initSocket( socket ) ;
+	setTimeout(function() {
+		console.log("onload");
+		var socket = io.connect('http://192.168.1.60:1337')  ;
+		ctrl.initSocket( socket ) ;
+	}, 500);
 }
 
 

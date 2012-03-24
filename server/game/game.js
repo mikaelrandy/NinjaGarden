@@ -18,9 +18,6 @@ Game.prototype = {
 		this.botStack		= [];
 		this.gameStartTime  = 0;
 		this.state 			= this.config.gameStates.AWAITING_PLAYERS;
-		// TODO: move this in the real start method
-		this.gameStartTime	= new Date().getTime();
-		this.gameEndTime	= this.gameStartTime + this.config.Games.MAX_DURATION * 1000;
 	},
 
 	addPlayer: function(player) {
@@ -53,7 +50,7 @@ Game.prototype = {
 		return datas;
 	},
 
-	doStart: function(socket) {
+	prepareStart: function(socket) {
 		var i = 1;
         while (this.addBot(new Bot(new Character()))) {
             console.log('Add bot ' + i++);
@@ -63,10 +60,14 @@ Game.prototype = {
 
         var ninjas = this.getNinjas();
         var updates = setInterval(function () {
-        	socket.emit('update.map', ninjas);
-	        socket.broadcast.emit('update.map', ninjas);
+        	utils.emitAll('update.map', ninjas);
 	    }, 30, socket, ninjas);
 	},
+
+	start: function() {
+		this.gameStartTime	= new Date().getTime();
+		this.gameEndTime	= this.gameStartTime + this.config.Games.MAX_DURATION * 1000;
+	}
 
 	// return a time in milliseconds
 	getCurrentTime: function() {
