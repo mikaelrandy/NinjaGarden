@@ -28,7 +28,7 @@ Character.prototype = {
 	},
 	clearEvents: function() {
 		this.events = [];
-	}
+	},
 	canPlay: function() {
 		return [Config.States.STUNNED, Config.States.DEAD].indexOf(this.state) == -1;
 	},

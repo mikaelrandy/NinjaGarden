@@ -18,10 +18,11 @@ Game.prototype = {
 		this.botStack		= [];
 		this.ninjaStack		= [];	// compute once game is ready to start
 		this.gameStartTime  = 0;
+		this.gameEndTime    = 0;
 		this.state 			= this.config.gameStates.AWAITING_PLAYERS;
 		this.timer 			= null;
 		this.director 		= null;
-		this.map 			= new Map(this.config);
+		this.map 			= new Map(Config);
 		this.socket 		= null;
 	},
 
@@ -55,7 +56,7 @@ Game.prototype = {
 		return datas;
 	},
 
-	prepareStart: function(socket, utils) {
+	prepareStart: function(socket) {
 		var i = 1;
         while (this.addBot(new Bot(new Character()))) {
             console.log('Add bot ' + i++);
@@ -79,13 +80,14 @@ Game.prototype = {
 		this.sendMapUpdate();
 	},
 
-	start: function(socket, utils) {
+	start: function(socket) {
 		this.gameStartTime	= new Date().getTime();
 		this.gameEndTime	= this.gameStartTime + this.config.game.MAX_DURATION * 1000;
 
         this.state = this.config.gameStates.STARTED;
 
-        this.timer = setInterval(this, 'processFrame', 30);
+var that = this;
+        this.timer = setInterval(function(){ that.processFrame() }, 30);
 	},
 
 	processFrame: function() {
@@ -95,7 +97,7 @@ Game.prototype = {
 	},
 
 	sendMapUpdate: function() {
-        utils.emitAll(this.socket, 'map.update', this.getCurrentDatas());
+        Utils.emitAll(this.socket, 'map.update', this.getCurrentDatas());
 	},
 
 	getCurrentDatas: function() {
@@ -103,13 +105,14 @@ Game.prototype = {
 		for(var i = 0; i < this.ninjaStack.length; i++) {
 			var character = this.ninjaStack[i].character;
 			ninjaDatas[character.id] = [character.x, character.y, character.dir, character.state, character.events];
+			character.clearEvents();
 		}
 
 		return {
         	'ninjas': ninjaDatas,
         	'times' : {'current': this.getCurrentTime(), 'left': this.getTimeLeft()}
         };
-	}
+	},
 
 
 	// return a time in milliseconds
