@@ -4,16 +4,16 @@
  * 	Will manage game participation
  */
 Game = function (gameStatesConfig, gameConfig) {
-	this.init(gameStatesConfig, gameConfig);
+	this.config 			= [];
+	this.config.game 		= gameConfig;
+	this.config.gameStates 	= gameStatesConfig;
+
+	this.init();
 }
 
 Game.prototype = {
 
-	init: function(gameStatesConfig, gameConfig) {
-		this.config 			= [];
-		this.config.game 		= gameConfig;
-		this.config.gameStates 	= gameStatesConfig;
-		
+	init: function() {
 		this.playerStack 	= [];
 		this.botStack		= [];
 		this.state 			= this.config.gameStates.AWAITING_PLAYERS;

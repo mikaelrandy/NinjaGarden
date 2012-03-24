@@ -22,10 +22,10 @@ Director.prototype = {
 		// process ALL the stuff...
 		while(current = toProcess.shift()) {
 			switch(decision.evt) {
-				Config.Events.ATTACK:
+				case Config.Events.ATTACK:
 					this.computeAttackAction(current.ninja, current.decision);
 					break;
-				Config.Events.SMOKE:
+				case Config.Events.SMOKE:
 					this.computeSmokeAction(current.ninja, current.decision);
 					break;
 				default:
@@ -37,6 +37,7 @@ Director.prototype = {
 
 	// compute new position from the character
 	computeNextPosition: function(ninja, decision) {
+
 
 	},
 
