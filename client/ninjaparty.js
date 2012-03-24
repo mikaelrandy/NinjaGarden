@@ -43,6 +43,7 @@ this.lastStepTime = null;
 
 // durée du jeu
 this.startedTime = null;
+this.elapsedTime = null;
 this.endTime = null;
 
 // Graphique
@@ -55,7 +56,7 @@ this.renderingMode = "Canvas";
 this.fpsCounter = 128;
 this.fpsTimer = (new Date()).getTime();
 this.showFps = false;
-this.predictiveEngine = true;
+this.predictiveEngine = false;
 this.sounds = { 
 	open: "start.wav" ,
 	tambour: "tambour.wav",
@@ -97,18 +98,18 @@ this.loadCraftyCharacterComponent = function () {
 	Crafty.c("Character", {
 		state: States.MOVING ,
 		bounce: function() {
-			if ((this.dir & Compass.N) && this.y <= 0) this.dir = this.dir - Compass.N + Compass.S ;
-			else if ((this.dir & Compass.S) && this.y >= mapHeight - playerHeight) this.dir = this.dir - Compass.S + Compass.N ;
-			if ((this.dir & Compass.W) && this.x <= 0) this.dir = this.dir - Compass.W + Compass.E ;
-			else if ((this.dir & Compass.E) && this.x >= mapWidth - playerWidth) this.dir = this.dir - Compass.E + Compass.W ;
+			if ((this.direction & Compass.N) && this.y <= 0) this.direction = this.direction - Compass.N + Compass.S ;
+			else if ((this.direction & Compass.S) && this.y >= mapHeight - playerHeight) this.direction = this.direction - Compass.S + Compass.N ;
+			if ((this.direction & Compass.W) && this.x <= 0) this.direction = this.direction - Compass.W + Compass.E ;
+			else if ((this.direction & Compass.E) && this.x >= mapWidth - playerWidth) this.direction = this.direction - Compass.E + Compass.W ;
 
 			this.updateAnimation();
 		},
 		continueMove: function(step) {
-			if (this.dir & Compass.N) this.y -= step ;
-			else if (this.dir & Compass.S) this.y += step ;
-			if (this.dir & Compass.E) this.x += step ;
-			else if (this.dir & Compass.W) this.x -= step ;
+			if (this.direction & Compass.N) this.y -= step ;
+			else if (this.direction & Compass.S) this.y += step ;
+			if (this.direction & Compass.E) this.x += step ;
+			else if (this.direction & Compass.W) this.x -= step ;
 		},
 		init: function() {
 			// bas haut droite gauche
@@ -120,18 +121,18 @@ this.loadCraftyCharacterComponent = function () {
 			;
 		},
 		changeDirection: function (newdir) {
-			this.dir = newdir;
+			this.direction = newdir;
 			this.updateAnimation();
 		},
 		updateAnimation: function()
 		{
-			if (this.dir & Compass.N) {
+			if (this.direction & Compass.N) {
 				if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 15, -1);
-			} else if (this.dir & Compass.S) {
+			} else if (this.direction & Compass.S) {
 				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 15, -1);
-			} else if (this.dir & Compass.W) {		
+			} else if (this.direction & Compass.W) {		
 				if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 15, -1);
-			} else if (this.dir & Compass.E) {
+			} else if (this.direction & Compass.E) {
 				if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 15, -1);
 			} else {
 				this.stop();
@@ -191,10 +192,16 @@ this.loadEngineBindings = function () {
 }
 
 this.loadServerFrame = function (frame) {
-	this.loadServerPlayers(frame.players) ;
+	this.loadServerPlayers(frame.ninjas) ;
+	this.loadServerTimes(frame.times);
 	this.setPlayerId(frame.playerId);
 	if (this.startWithAutoMove) this.startAutoMove() ;
 };
+
+this.loadServerTimes = function (times) {
+	this.elapsedTime = times.current ;
+	this.endTime = times.left ;
+}
 
 this.setPlayerId = function (playerId) {
 	this.playerId = playerId ;
@@ -214,7 +221,12 @@ this.loadServerPlayers = function (players) {
 	var ninjaParty = this;
 	var playerHeight = this.playerHeight;
 	var playerWidth = this.playerHeight;
-	players.forEach( function (data, i) {
+	for (var i in players) {
+		var data = players[i] ;
+		data.x = data[0];
+		data.y = data[1];
+		data.state = data[2];
+		data.events = data[3];
 		if (! ninjaParty.characters[i]) {
 			ninjaParty.characters[i] = Crafty.e("Character")
 				.attr( { 
@@ -222,18 +234,18 @@ this.loadServerPlayers = function (players) {
 						y: data.y, 
 						w: ninjaParty.playerWidth, 
 						h: ninjaParty.playerHeight, 
-						dir: data.dir, 
+						direction: data.direction, 
 						state: data.state
 				})
 		} else {
 			var c = ninjaParty.characters[i] ;
 			c.move(c.x, c.y);
-			if (i != ninjaParty.playerId) c.dir = data.dir ;
+			if (i != ninjaParty.playerId) c.direction = data.direction ;
 			c.state = data.state ;
 		}
-		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.dir) ;
+		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
-	}) ;
+	} ;
 };
 
 
@@ -249,19 +261,19 @@ this.getInputForInstantDirection = function  () {
 	else if (!!Crafty.keydown[this.Keys.S]) madir += this.Compass.S ;
 	if (!!Crafty.keydown[this.Keys.E]) madir += this.Compass.E ;
 	else if (!!Crafty.keydown[this.Keys.W]) madir += this.Compass.W ;
-	if (!this.player || (this.player.dir != madir)) this.changeDirection(madir) ;
+	if (!this.player || (this.player.direction != madir)) this.changeDirection(madir) ;
 };
 
 
-this.changeDirection = function (dir) {
-	if (!dir && !this.allowPlayerStop) return ;
-	if (!dir && this.autoMove) return ;
+this.changeDirection = function (direction) {
+	if (!direction && !this.allowPlayerStop) return ;
+	if (!direction && this.autoMove) return ;
 	this.autoMove = false;
 	if (this.showDebug) {
-		console.log("new direction '"+dir+"' (old was '"+((!this.player) ? 'unknown' : this.player.dir)+"')")
+		console.log("new direction '"+direction+"' (old was '"+((!this.player) ? 'unknown' : this.player.direction)+"')")
 	}
-	this.currentDir = dir ;
-	if (this.player) this.player.changeDirection(dir) ;
+	this.currentDir = direction ;
+	if (this.player) this.player.changeDirection(direction) ;
 };
 
 this.getInputForPersistantDirection = function (key) {
@@ -278,11 +290,11 @@ this.getInputForPersistantDirection = function (key) {
 };
 
 
-this.addPersistentDirection = function (dir, opposite) {
+this.addPersistentDirection = function (direction, opposite) {
 	var madir = this.currentDir;
 	if (madir & opposite) madir -= opposite ;
-	else if (((madir & dir) == 0)) madir += dir ;
-	if (!this.player || (this.player.dir != madir)) this.changeDirection(madir) ;
+	else if (((madir & direction) == 0)) madir += direction ;
+	if (!this.player || (this.player.direction != madir)) this.changeDirection(madir) ;
 };
 
 this.getInputForActions = function (key) {
@@ -298,7 +310,7 @@ this.getInputForActions = function (key) {
 };
 
 this.debugPosition = function () {
-	console.log("DEBUG my position is = "+this.player.dir+" , x = "+this.player.x+" , y = "+this.player.y) ;
+	console.log("DEBUG my position is = "+this.player.direction+" , x = "+this.player.x+" , y = "+this.player.y) ;
 };
 
 this.cheatAndFindOwnPlayer = function() {
@@ -314,6 +326,10 @@ this.smoke = function () {
 	if (this.showDebug) console.log("Smoke ! (from me)") ;	
 	if (this.player) this.player.smoke() ;
 };
+
+this.sendActionToServer = function() {
+
+}
 
 this.getSteps = function(t, f) {
 	var elapsed = t - this.lastStepTime + this.remainingMilliseconds ;
