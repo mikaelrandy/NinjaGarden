@@ -30,7 +30,7 @@ Player.prototype = {
 			'duration' : 1;
 		}
 
-		if(decision.evt == null) {
+		if(decision.isEvent()) {
 			this.character.decisionStack.push(newDecisionEntry);
 		} else {
 			this.character.decisionStack([newDecisionEntry]);

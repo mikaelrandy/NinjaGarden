@@ -37,7 +37,7 @@ Bot.prototype = {
 		var newState = this.character.getRandState();
 		this.character.decisionStack.push({
 			'decision' : new Decision(newState, newDir, null),
-			'duration' : rand(10 * Times.NB_FRAME_SEC)
+			'duration' : rand(10 * Config.Times.NB_FRAME_SEC)
 		});
 	}
 }

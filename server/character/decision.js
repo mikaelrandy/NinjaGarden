@@ -3,3 +3,9 @@ Decision = function(state, dir, evt) {
 	this.dir = dir;
 	this.evt = evt;
 }
+
+Decision.prototype = {
+	isEvent: function() {
+		return this.evt == undefined;
+	}
+}
