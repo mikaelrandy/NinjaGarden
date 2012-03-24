@@ -63,6 +63,11 @@ io.sockets.on('connection', function(socket) {
     socket.on('attack', function() { 
         player_input_event.attack(socket);
     });
+
+    // Send event defined by client (for debug purpoise )
+    socket.on('debug.ask', function(data) {
+        socket.emit(data[0], data[1]);
+    })
 });
 
 
