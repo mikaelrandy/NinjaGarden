@@ -48,12 +48,23 @@ console.log('Server running at http://'+config.host+':'+config.port+'/');
 
 // On client connection, check game state and connect him
 io.sockets.on('connection', function(socket) {
-    // Reset game
-    socket.on('game.reset', function() {
-        game.init();
-        game.addPlayer(new Player(new Character()));
-        sendGameState(socket);
-    });
+
+    // Debug event
+    if( config.debug ) {
+
+        // Reset game ()
+        socket.on('game.reset', function() {
+            game.init();
+            game.addPlayer(new Player(new Character()));
+            sendGameState(socket);
+        });
+
+        // This event will send an event back defined by data's first element
+        // Data's second element will be send as data into back event
+        socket.on('debug.ask', function(data) {
+            socket.emit(data[0], data[1]);
+        });        
+    }
 
     // Check if player can join the game
     if( !game.addPlayer(new Player(new Character())) ) {
@@ -68,11 +79,6 @@ io.sockets.on('connection', function(socket) {
     // Event on player
     socket.on('attack', function() { 
         player_input_event.attack(socket);
-    });
-
-    // Send event defined by client (for debug purpoise )
-    socket.on('debug.ask', function(data) {
-        socket.emit(data[0], data[1]);
     });
 });
 
