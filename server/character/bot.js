@@ -12,7 +12,7 @@ Bot.prototype = {
 
 		// fill stack if needed
 		if(this.character.decisionStack.length == 0) {
-			this.takeNewDecision();
+			this.generateNewDecision();
 		}
 
 		var timedDecision = this.character.decisionStack[0];
@@ -26,7 +26,7 @@ Bot.prototype = {
 
 		return timedDecision.decision;
 	},
-	takeNewDecision: function() {
+	generateNewDecision: function() {
 		// faint stunned state
 		if(rand(500) == 1) {
 			this.character.isStunned();
@@ -37,7 +37,7 @@ Bot.prototype = {
 		var newState = this.character.getRandState();
 		this.character.decisionStack.push({
 			'decision' : new Decision(newState, newDir, null),
-			'duration' : rand(10 * Times.NB_FRAME_SEC)
+			'duration' : rand(10 * Config.Times.NB_FRAME_SEC)
 		});
 	}
 }

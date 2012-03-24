@@ -64,6 +64,7 @@ this.initEngine = function() {
 };
 
 this.loadSprites = function() {
+	// temp sprite, waiting designer
 	Crafty.sprite(16, "images/sprite.png", { ninja: [0,3] });
 };
 
@@ -75,13 +76,16 @@ this.loadCraftyCharacterComponent = function () {
 	var mapWidth = this.mapWidth ;
 	var playerHeight = this.playerHeight;
 	var playerWidth = this.playerWidth;
+	var showDebug = this.showDebug ;
 	Crafty.c("Character", {
 		state: States.MOVING ,
 		bounce: function() {
 			if ((this.dir & Compass.N) && this.y <= 0) this.dir = this.dir - Compass.N + Compass.S ;
 			else if ((this.dir & Compass.S) && this.y >= mapHeight - playerHeight) this.dir = this.dir - Compass.S + Compass.N ;
 			if ((this.dir & Compass.W) && this.x <= 0) this.dir = this.dir - Compass.W + Compass.E ;
-			else if ((this.dir & Compass.E) && this.x >= mapWidth - playerWidth) this.dir = this.dir - Compass.E + Compass.W ;		
+			else if ((this.dir & Compass.E) && this.x >= mapWidth - playerWidth) this.dir = this.dir - Compass.E + Compass.W ;
+
+			this.updateAnimation();
 		},
 		continueMove: function(step) {
 			if (this.dir & Compass.N) this.y -= step ;
@@ -91,6 +95,56 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		init: function() {
 			this.addComponent("2D, "+renderingMode+", Color");
+		},
+		changeDirection: function (newdir) {
+			this.dir = newdir;
+			this.updateAnimation();
+		},
+		updateAnimation: function()
+		{
+			switch (this.dir) {
+				case Compass.N :
+				case Compass.N + Compass.E:
+				case Compass.N + Compass.W:
+					if(!this.isPlaying('walk_up'))
+					{
+						this.stop().animate("walk_up", 15, -1);
+					}
+					break;
+				case Compass.S :
+				case Compass.S + Compass.W:
+				case Compass.S + Compass.E:	
+					if(!this.isPlaying('walk_down'))
+					{
+						this.stop().animate("walk_down", 15, -1);
+					}
+					break;
+				case Compass.W :		
+					if(!this.isPlaying('walk_left'))
+					{	
+						this.stop().animate("walk_left", 15, -1);
+					}
+					break;
+				case Compass.E :
+					if(!this.isPlaying('walk_right'))
+					{	
+						this.stop().animate("walk_right", 15, -1);
+					}
+					break;
+				default: 
+					this.stop();
+					break;
+			}
+		},
+
+		changeState: function (newstate) {
+			this.state = newstate ;
+		},
+		attack: function () {
+
+		},
+		smoke: function () {
+
 		}
 	})
 };
@@ -170,14 +224,14 @@ this.loadServerPlayers = function (players) {
 				.animate("walk_right", 9, 3, 11)
 				.animate("walk_up", 3, 3, 5)
 				.animate("walk_down", 0, 3, 2)
-				.animate("walk_down", 15, -1)
-				;
 		} else {
 			var c = ninjaParty.characters[i] ;
 			c.move(c.x, c.y);
 			if (i != ninjaParty.playerId) c.dir = data.dir ;
 			c.state = data.state ;
 		}
+		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.dir) ;
+		ninjaParty.characters[i].changeState(data.state) ;
 	}) ;
 };
 
@@ -206,7 +260,7 @@ this.changeDirection = function (dir) {
 		console.log("new direction '"+dir+"' (old was '"+((!this.player) ? 'unknown' : this.player.dir)+"')")
 	}
 	this.currentDir = dir ;
-	if (this.player) this.player.dir = dir ;
+	if (this.player) this.player.changeDirection(dir) ;
 };
 
 this.getInputForPersistantDirection = function (key) {
@@ -227,7 +281,7 @@ this.addPersistentDirection = function (dir, opposite) {
 	var madir = this.currentDir;
 	if (madir & opposite) madir -= opposite ;
 	else if (((madir & dir) == 0)) madir += dir ;
-	if (!this.player || (this.player.dir != madir)) changeDirection(madir) ;
+	if (!this.player || (this.player.dir != madir)) this.changeDirection(madir) ;
 };
 
 this.getInputForActions = function (key) {
@@ -259,10 +313,12 @@ this.cheatAndFindOwnPlayer = function() {
 
 this.attack = function () {
 	if (this.showDebug) console.log("Attack ! (from me)") ;	
+	if (this.player) this.player.attack() ;
 };
 
 this.smoke = function () {
 	if (this.showDebug) console.log("Smoke ! (from me)") ;	
+	if (this.player) this.player.smoke() ;
 };
 
 this.getSteps = function(t, f) {
