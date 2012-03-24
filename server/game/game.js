@@ -20,6 +20,7 @@ Game.prototype = {
 		this.state 			= this.config.gameStates.AWAITING_PLAYERS;
 		// TODO: move this in the real start method
 		this.gameStartTime	= new Date().getTime();
+		this.gameEndTime	= this.gameStartTime + this.config.Games.MAX_DURATION * 1000;
 	},
 
 	addPlayer: function(player) {
@@ -47,8 +48,12 @@ Game.prototype = {
 		return true;
 	},
 	// return a time in milliseconds
-	getCurrentGameTime: function() {
+	getCurrentTime: function() {
 		return this.gameStartTime == 0 ? 0 : new Date().getTime() - this.gameStartTime;
+	},
+	// return a time in milliseconds
+	getTimeLeft: function() {
+		return this.gameEndTime == 0 ? 0 : this.gameEndTime - new Date().getTime();
 	},
 	// called by the directort (likely if a player got all pillars)
 	notifyWinner: function(winnerPlayer) {

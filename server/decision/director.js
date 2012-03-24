@@ -62,7 +62,7 @@ Director.prototype = {
 			for(var j in playersInArea) {
 				var player = playersInArea[j];
 				if(typeof(player.character.stats.pillars[pillar.id]) == 'undefined') {
-					player.character.stats.pillars[pillar.id] = this.game.getCurrentGameTime();
+					player.character.stats.pillars[pillar.id] = this.game.getCurrentTime();
 					player.character.addEvent(Config.Events.GET_PILLAR);
 
 					var nbFoundPillar = 0;
