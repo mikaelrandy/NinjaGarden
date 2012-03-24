@@ -7,7 +7,7 @@ Director = function(game) {
 
 Director.prototype = {
 	init: function() {
-		this.ninjaStack = this.game.getNinjas();
+		this.ninjaStack = this.game.ninjaStack;
 	},
 
 	// called by thegame manager
@@ -114,9 +114,6 @@ Director.prototype = {
 		for(var i in attackableNinjas) {
 			var attackedNinja = attackableNinjas[i];
 
-
-			// TODO: usefull? 
-			//attackedNinja.addEvent(Config.Events.ATTACKED);
 			if(typeof(attackedNinja) == 'Player') {
 				attackedNinja.character.isDead(); 
 				attackedNinja.character.addEvent(Config.Events.IS_DEAD);

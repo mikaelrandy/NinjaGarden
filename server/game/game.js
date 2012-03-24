@@ -16,8 +16,12 @@ Game.prototype = {
 	init: function() {
 		this.playerStack 	= [];
 		this.botStack		= [];
+		this.ninjaStack		= [];	// compute once game is ready to start
 		this.gameStartTime  = 0;
 		this.state 			= this.config.gameStates.AWAITING_PLAYERS;
+		this.timer 			= null;
+		this.director 		= null;
+		this.map 			= new Map(this.config);
 	},
 
 	addPlayer: function(player) {
@@ -57,17 +61,41 @@ Game.prototype = {
         }
 
         this.state = this.config.gameStates.STARTED;
+ 
+ 		// define ninja stack
+        this.ninjaStack = [];
+        for(var i=0; i < this.playerStack.length; i++) {
+        	this.ninjaStack.push(this.playerStack[i]);
+        }
+        for(var i=0; i < this.botStack.length; i++) {
+        	this.ninjaStack.push(this.botStack[i]);
+        }
 
-        var ninjas = this.getNinjas();
-        var updates = setInterval(function () {
-        	utils.emitAll('update.map', ninjas);
-	    }, 30, socket, ninjas);
+        this.director = new Director(this);
+
 	},
 
 	start: function() {
 		this.gameStartTime	= new Date().getTime();
 		this.gameEndTime	= this.gameStartTime + this.config.Games.MAX_DURATION * 1000;
-	}
+        this.timer = setInterval(this, 'processFrame', 30);
+	},
+
+	processFrame: function() {
+
+		this.director.processNewFrame();
+
+		var ninjaDatas = {};
+		for(var i = 0; i < this.ninjaStack.length; i++) {
+			var character = this.ninjaStack[i].character;
+			ninjaDatas[character.id] = [character.x, character.y, character.dir, character.state, character.events];
+		}
+
+        utils.emitAll('update.map', {
+        	'ninjas': ninjaDatas,
+        	'times' : {'current': this.getCurrentTime(), 'left': this.getTimeLeft()}
+        });
+	},
 
 	// return a time in milliseconds
 	getCurrentTime: function() {

@@ -11,7 +11,7 @@ Character.prototype = {
 		this.x = Utils.rand(Config.Dists.MAP_WIDTH);
 		this.y = Utils.rand(Config.Dists.MAP_HEIGHT);
 		this.dir = this.getRandDir();
-		this.state = this.getRandState();
+		this.state = 0;
 		this.stats = {
 			'kills' :   [],
 			'smokes' :  [],
@@ -26,6 +26,9 @@ Character.prototype = {
 
 		// TODO: need to be cleared after each export for client drawing
 	},
+	clearEvents: function() {
+		this.events = [];
+	}
 	canPlay: function() {
 		return [Config.States.STUNNED, Config.States.DEAD].indexOf(this.state) == -1;
 	},
