@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<title>Mock client</title>
+		<script type="text/javascript" src="http://192.168.1.37:1337/socket.io/socket.io.js"></script>
+	</head>
+	<body>
+		<h1>Mock client for test purpose</h1>
+
+		<ul>
+			<li>
+				<a href="#" id="event1">Event 1</a>
+			</li>
+			<li></li>
+			<li></li>
+		</ul>
+
+		<script type="text/javascript">
+			window.onload = function() {
+				var socket = io.connect('http://192.168.1.37:1337');
+			};
+
+			document.getElementById('event1').onclick = function() {
+
+			};
+		</script>
+	</body>
+</html>
