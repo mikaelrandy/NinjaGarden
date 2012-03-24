@@ -6,24 +6,33 @@ Character = function (id) {
 
 Character.prototype = {
 	init: function() {
-		this.x = this.rand(0, 50);	// TODO: replace with max map coord
-		this.y = this.rand(0, 100);	// TODO: replace with max map coord
-		this.randomDir();
-		this.randomState();
+		this.x = rand(0, 50);	// TODO: replace with max map coord
+		this.y = rand(0, 100);	// TODO: replace with max map coord
+		this.dir = this.getRandDir();
+		this.state = this.getRandState();
 		this.stats = {
 			'kills' : {},
 			'smokes' : {},
 			'pillars' : {},
 			'stunts' : {}
 		};
-		this.decisionStack : [];
-		this.events: [];
+		this.decisionStack = [];
+		this.events = [];
 	},
-	randomDir: function() {
-		var dirs = dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-		this.dir = dirs[rand(dirs.length)];
+	// clear decision stack with stun state
+	isStunned: function() {
+		this.decisionStack = [{
+			'decision' : new Decision(States.STUNNED, null, null),
+			'duration' : Times.STUN_DURATION * Times.NB_FRAME_SEC
+		}];
+
+		this.state = States.STUNNED;
 	},
-	randomState: function() {
-		this.state = rand(10) == 5 ? 0 : States.MOVING;
+	getRandDir: function() {
+		var dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+		return Card[dirs[rand(dirs.length - 1)]];
+	},
+	getRandState: function() {
+		return rand(10) == 5 ? 0 : States.MOVING;
 	}
 }
