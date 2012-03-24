@@ -27,6 +27,18 @@
 				socket.on('inAttack', function() {
 					console.log('inAttack');
 				});
+
+				socket.on('game.cannot_join', function() {
+					console.log('cannot join :(');
+				});
+
+				socket.on('game.awaiting', function() {
+					console.log('must wait for other player');
+				});
+
+				socket.on('game.start', function() {
+					console.log('GOOOOOOOO !!!! \o/');
+				});
 			};
 
 			document.getElementById('attack').onclick = function() {
