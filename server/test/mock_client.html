@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<title>Mock client</title>
+		<script type="text/javascript" src="http://192.168.1.60:1337/socket.io/socket.io.js"></script>
+	</head>
+	<body>
+		<h1>Mock client for test purpose</h1>
+
+		<ul>
+			<li>
+				<a href="#" id="attack">Attack</a>
+			</li>
+			<li></li>
+			<li></li>
+		</ul>
+
+		<script type="text/javascript">
+			var socket;
+
+			window.onload = function() {
+				socket = io.connect('http://192.168.1.60:1337');
+
+				socket.on('refreshFrame', function() {
+					console.log('must refresh');
+				});
+
+				socket.on('inAttack', function() {
+					console.log('inAttack');
+				});
+			};
+
+			document.getElementById('attack').onclick = function() {
+				socket.emit('attack', {my: 'data', foo: 'bar'});
+
+				return false;
+			};
+		</script>
+	</body>
+</html>
