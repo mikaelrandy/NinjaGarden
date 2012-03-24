@@ -1,10 +1,6 @@
 // here ninja are either a bot or a player. both have a character entity
 Director = function(game) {
 	this.game = game;
-	this.nbPillar = 0;
-	for(var i in this.game.map.pillars) {
-		this.nbPillar++;
-	}
 }
 
 
@@ -12,6 +8,7 @@ Director.prototype = {
 	// called by thegame manager
 	processNewFrame: function() {
 		var toProcess, movedPlayers = [];
+
 		// sort the decisions based on their priority
 		for(var id in this.game.ninjaStack) {
 			// do not process characters that can't move
@@ -59,8 +56,8 @@ Director.prototype = {
 		}
 
 		// checks pillars for real players that have moved
-		for(var i in game.map.pillars) {
-			var pillar = game.map.pillars[i];
+		for(var i=0; i < this.game.map.pillars.length; i++) {
+			var pillar = this.game.map.pillars[i];
 			var playersInArea = this.findNinjasNear(movedPlayers, pillar.x, pillar.y, Config.Dists.PILLAR_AREA);
 			for(var j in playersInArea) {
 				var player = playersInArea[j];
@@ -73,7 +70,7 @@ Director.prototype = {
 						nbFoundPillar++;
 					}
 
-					if(nbFoundPillar == this.nbPillar) {
+					if(nbFoundPillar == this.game.map.pillars.length) {
 						player.character.addEvent(Config.Events.WIN);
 						// TODO: other notification
 						// this.game.notifyWinner(player);

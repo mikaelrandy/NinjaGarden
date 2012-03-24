@@ -8,6 +8,8 @@
 	<script type="text/javascript" src="../../server/decision/decision.js"></script>
 	<script type="text/javascript" src="../../server/character/character.js"></script>
 	<script type="text/javascript" src="../../server/character/bot.js"></script>
+	<script type="text/javascript" src="../../server/map/map.js"></script>
+	<script type="text/javascript" src="../../server/map/pillar.js"></script>
 	<script type="text/javascript">
 		function init() {
 			for(var i=0; i< 10; i++) {
@@ -42,6 +44,7 @@
 			setInterval(function() {
 				move();
 			}, parseInt(1000 / Config.Times.NB_FRAME_SEC));
+			console.log(new Map(Config));
 		}
 		
 	</script>
