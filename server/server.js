@@ -1,10 +1,13 @@
-var http = require('http');
+var http    = require('http');
+var io      = require('socket.io');
 
-http.createServer(function (req, res) 
-{
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('<h1>Hello World</h1>\n');
-})
-.listen(1337, '127.0.0.1');
+var app     = http.createServer();
 
-console.log('Server running at http://127.0.0.1:1337/');
+app.listen(1337, '192.168.1.37');
+io.listen(app);
+console.log('Server running at http://192.168.1.37:1337/');
+
+
+/*io.sockets.on('connection', function(socket) {
+    console.log('Event connnection');
+});*/
