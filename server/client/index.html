@@ -39,6 +39,10 @@
 				socket.on('game.start', function() {
 					console.log('GOOOOOOOO !!!! \o/');
 				});
+
+				socket.on('update.map', function(data) {
+					console.log(data);
+				});
 			};
 
 			document.getElementById('attack').onclick = function() {

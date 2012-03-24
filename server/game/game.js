@@ -46,6 +46,27 @@ Game.prototype = {
 		this.botStack.push(bot);
 		return true;
 	},
+
+	getNinjas: function() {
+		var datas = [this.botStack, this.playerStack];
+		return datas;
+	},
+
+	doStart: function(socket) {
+		var i = 1;
+        while (this.addBot(new Bot(new Character()))) {
+            console.log('Add bot ' + i++);
+        }
+
+        this.state = this.config.gameStates.STARTED;
+
+        var ninjas = this.getNinjas();
+        var updates = setInterval(function () {
+        	socket.emit('update.map', ninjas);
+	        socket.broadcast.emit('update.map', ninjas);
+	    }, 30, socket, ninjas);
+	},
+
 	// return a time in milliseconds
 	getCurrentGameTime: function() {
 		return this.gameStartTime == 0 ? 0 : new Date().getTime() - this.gameStartTime;
