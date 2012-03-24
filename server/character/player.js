@@ -27,7 +27,7 @@ Player.prototype = {
 	addNewDecision: function(decision) {
 		newDecisionEntry = {
 			'decision' : decision,
-			'duration' : 1;
+			'duration' : 1
 		}
 
 		if(decision.isEvent()) {
@@ -37,3 +37,5 @@ Player.prototype = {
 		}
 	}
 }
+
+exports.Player = Player;
