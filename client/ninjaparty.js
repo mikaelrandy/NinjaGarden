@@ -94,7 +94,7 @@ this.loadCraftyCharacterComponent = function () {
 			else if (this.dir & Compass.W) this.x -= step ;
 		},
 		init: function() {
-			this.addComponent("2D, "+renderingMode+", Color");
+			this.addComponent("2D, "+renderingMode);
 		},
 		changeDirection: function (newdir) {
 			this.dir = newdir;
