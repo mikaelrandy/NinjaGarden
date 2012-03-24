@@ -1,4 +1,6 @@
-function NinjaParty() {
+function NinjaParty(socket) {
+
+this.socket = socket ;
 
 // Constantes
 this.Compass = { N:1, E:2, S:4, W:8, NE:3, NW:9, SE:6, SW: 12};
@@ -59,7 +61,13 @@ this.predictiveEngine = true;
 this.initEngine = function() {
 	Crafty.init(this.mapWidth, this.mapHeight);
 	Crafty.background('url('+this.mapBackgroundImage+')');
+	this.loadSprites();
 	this.loadCraftyCharacterComponent();
+};
+
+this.loadSprites = function() {
+	// temp sprite, waiting designer
+	Crafty.sprite(16, "images/sprite.png", { Ninja: [0,3] });
 };
 
 this.loadCraftyCharacterComponent = function () {
@@ -77,7 +85,9 @@ this.loadCraftyCharacterComponent = function () {
 			if ((this.dir & Compass.N) && this.y <= 0) this.dir = this.dir - Compass.N + Compass.S ;
 			else if ((this.dir & Compass.S) && this.y >= mapHeight - playerHeight) this.dir = this.dir - Compass.S + Compass.N ;
 			if ((this.dir & Compass.W) && this.x <= 0) this.dir = this.dir - Compass.W + Compass.E ;
-			else if ((this.dir & Compass.E) && this.x >= mapWidth - playerWidth) this.dir = this.dir - Compass.E + Compass.W ;		
+			else if ((this.dir & Compass.E) && this.x >= mapWidth - playerWidth) this.dir = this.dir - Compass.E + Compass.W ;
+
+			this.updateAnimation();
 		},
 		continueMove: function(step) {
 			if (this.dir & Compass.N) this.y -= step ;
@@ -86,21 +96,41 @@ this.loadCraftyCharacterComponent = function () {
 			else if (this.dir & Compass.W) this.x -= step ;
 		},
 		init: function() {
-			this.addComponent("2D, "+renderingMode+", Color");
+			this.addComponent("2D, "+renderingMode+", Ninja, SpriteAnimation");
+			this.animate("walk_left", 6, 3, 8)
+				.animate("walk_right", 9, 3, 11)
+				.animate("walk_up", 3, 3, 5)
+				.animate("walk_down", 0, 3, 2);
 		},
 		changeDirection: function (newdir) {
 			this.dir = newdir;
+			this.updateAnimation();
 		},
+		updateAnimation: function()
+		{
+			if (this.dir & Compass.N) {
+				if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 15, -1);
+			} else if (this.dir & Compass.S) {
+				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 15, -1);
+			} else if (this.dir & Compass.W) {		
+				if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 15, -1);
+			} else if (this.dir & Compass.E) {
+				if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 15, -1);
+			} else {
+				this.stop();
+			}
+		},
+
 		changeState: function (newstate) {
 			this.state = newstate ;
 		},
+		
 		attack: function () {
-
 		},
+		
 		smoke: function () {
-
 		}
-	});	
+	})
 };
 
 this.initGame = function (frame) {
@@ -166,7 +196,6 @@ this.loadServerPlayers = function (players) {
 	players.forEach( function (data, i) {
 		if (! ninjaParty.characters[i]) {
 			ninjaParty.characters[i] = Crafty.e("Character")
-				.color('rgb(0,0,0)')
 				.attr( { 
 						x: data.x, 
 						y: data.y, 
@@ -174,7 +203,7 @@ this.loadServerPlayers = function (players) {
 						h: ninjaParty.playerHeight, 
 						dir: data.dir, 
 						state: data.state
-				} );	
+				})
 		} else {
 			var c = ninjaParty.characters[i] ;
 			c.move(c.x, c.y);

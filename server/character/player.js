@@ -37,3 +37,5 @@ Player.prototype = {
 		}
 	}
 }
+
+exports.Player = Player;
