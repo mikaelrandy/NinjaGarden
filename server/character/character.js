@@ -12,13 +12,19 @@ Character.directions = [];
 for (var i in Config.Compass) { 
 	Character.directions.push(Config.Compass[i]) ; 
 }
+Character.dists = {
+	halfPW: parseInt(Config.Dists.PLAYER_WIDTH / 2),
+	halfPH: parseInt(Config.Dists.PLAYER_HEIGHT / 2),
+	halfSPW: parseInt(Config.Dists.SPRITE_PLAYER_WIDTH / 2),
+	halfSPH: parseInt(Config.Dists.SPRITE_PLAYER_HEIGHT / 2)
+};
 
 Character.prototype = {
 	init: function() {
-		this.x = Utils.rand(Config.Dists.MAP_WIDTH);
-		this.y = Utils.rand(Config.Dists.MAP_HEIGHT);
+		this.x = Utils.rand(Config.Dists.MAP_WIDTH - 50) + 25;
+		this.y = Utils.rand(Config.Dists.MAP_HEIGHT - 50) + 25;
 		this.dir = this.getRandDir();
-		this.state = 0;
+		this.state = this.getRandState();
 		this.stats = {
 			'kills' :   [],
 			'smokesLeft' :  Config.Games.NB_SMOKE,
@@ -74,13 +80,13 @@ Character.prototype = {
 	},
 	// bounce against the border of the map
 	bounce: function() {
-		if ((this.dir & Config.Compass.N) && this.y <= 0) 
+		if ((this.dir & Config.Compass.N) && this.y <= Config.Dists.MAP_WALL_HEIGHT) 
 			this.dir = this.dir - Config.Compass.N + Config.Compass.S ;
-		else if ((this.dir & Config.Compass.S) && this.y >= Config.Dists.MAP_HEIGHT - Config.Dists.PLAYER_HEIGHT) 
+		else if ((this.dir & Config.Compass.S) && this.y >= Config.Dists.MAP_HEIGHT - Character.dists.halfSPH) 
 			this.dir = this.dir - Config.Compass.S + Config.Compass.N ;
 		if ((this.dir & Config.Compass.W) && this.x <= 0) 
 			this.dir = this.dir - Config.Compass.W + Config.Compass.E ;
-		else if ((this.dir & Config.Compass.E) && this.x >= Config.Dists.MAP_WIDTH - Config.Dists.PLAYER_WIDTH) 
+		else if ((this.dir & Config.Compass.E) && this.x >= Config.Dists.MAP_WIDTH - Character.dists.halfSPW) 
 			this.dir = this.dir - Config.Compass.E + Config.Compass.W ;		
 	}
 }
