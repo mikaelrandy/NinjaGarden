@@ -14,7 +14,7 @@ Character.prototype = {
 		this.state = 0;
 		this.stats = {
 			'kills' :   [],
-			'smokes' :  [],
+			'smokesLeft' :  Config.Games.NB_SMOKE,
 			'pillars' : {},	// PillarId : Timestamp
 			'stunts' :  []
 		};

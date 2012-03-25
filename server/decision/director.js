@@ -130,8 +130,12 @@ Director.prototype = {
 	// compute the result of a smoke
 	// it just stop the player and add an event on it
 	computeSmokeAction: function(ninja, decision) {
-		ninja.character.addEvent(Config.Events.SMOKE);
 		ninja.character.state = null;	// a l'arret
+		
+		if(ninja.character.stats.smokesLeft > 0) {
+			ninja.character.stats.smokesLeft--;
+			ninja.character.addEvent(Config.Events.SMOKE);
+		}
 	},
 
 	// find ninja arround the given point
@@ -143,7 +147,7 @@ Director.prototype = {
 				diffX = ninja.character.x - x,
 				diffY = ninja.character.y - y;
 			if(ninja.character.canPlay() && diffX * diffX + diffY * diffY <= cmpMaxDist) {
-				found[minja.id] = ninja; 
+				found[ninja.id] = ninja; 
 			}
 		}
 
