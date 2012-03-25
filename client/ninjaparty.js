@@ -396,6 +396,10 @@ this.loadServerPlayers = function (players) {
 			c.x = data.x - ninjaParty.playerWidth / 4 ;
 			c.y = data.y - ninjaParty.playerHeight / 4 ;
 			c.direction = data.direction ;
+			if (i == ninjaParty.playerId) {
+				ninjaParty.currentRealDir = data.direction ;
+				if (c.state & ninjaParty.States.MOVING) ninjaParty.currentDir = data.direction ;
+			}	 
 			c.state = data.state ;
 			c.updateDirectionAnimation();
 		}
