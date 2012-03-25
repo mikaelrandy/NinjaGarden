@@ -161,6 +161,11 @@ Game.prototype = {
 			'isKillerWin' : false
 		}
         Utils.emitAll(this.socket, 'map.end', frameDatas);
+	},
+
+	notifyPlayerAction: function(player, actionData) {
+		var decision = new Decision(actionData.state, actionData.direction, actionData.action);
+		player.addNewDecision(decision);
 	}
 };
 

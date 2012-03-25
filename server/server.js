@@ -106,7 +106,7 @@ io.sockets.on('connection', function(socket) {
     // Event on valid player (player.action)
     if( isValidPlayer ) {
         socket.on('player.action', function(data) { 
-            console.log('player.action', currentPlayer, data);
+            game.notifyPlayerAction(currentPlayer, data);
         });
     }
 });
