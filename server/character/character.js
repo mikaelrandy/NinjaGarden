@@ -52,7 +52,7 @@ Character.prototype = {
 		this.state = Config.States.DEAD;
 	},
 	getRandDir: function() {
-		return this.directions[Utils.rand(directions.length - 1)]];
+		return this.directions[Utils.rand(this.directions.length - 1)];
 	},
 	getRandState: function() {
 		return Utils.rand(25) == 5 ? 0 : Config.States.MOVING;
