@@ -105,6 +105,7 @@ this.loadCraftyPillarComponent = function() {
 };
 
 this.loadCraftyCharacterComponent = function () {
+	var attacking = false;
 	var States = this.States;
 	var Compass = this.Compass;
 	var renderingMode = this.renderingMode;
@@ -121,7 +122,7 @@ this.loadCraftyCharacterComponent = function () {
 			else if ((this.direction & Compass.S) && this.y >= mapHeight - playerHeight) this.direction = this.direction - Compass.S + Compass.N ;
 			if ((this.direction & Compass.W) && this.x <= 0) this.direction = this.direction - Compass.W + Compass.E ;
 			else if ((this.direction & Compass.E) && this.x >= mapWidth - playerWidth) this.direction = this.direction - Compass.E + Compass.W ;
-			this.updateAnimation();
+			this.updateDirectionAnimation();
 		},
 		continueMove: function(step) {
 			if (this.direction & Compass.N) this.y -= step ;
@@ -144,21 +145,21 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		changeDirection: function (newdir) {
 			this.direction = newdir;
-			this.updateAnimation();
+			this.updateDirectionAnimation();
 		},
-		updateAnimation: function()
+		updateDirectionAnimation: function()
 		{
-			if (this.direction & Compass.N) {
-				if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 30, -1);
-			} else if (this.direction & Compass.S) {
-				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 30, -1);
-			} else if (this.direction & Compass.W) {		
-				if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 30, -1);
-			} else if (this.direction & Compass.E) {
-				if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 30, -1);
-			} else {
-				this.stop();
-			}
+				if (this.direction & Compass.N) {
+					if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 30, -1);
+				} else if (this.direction & Compass.S) {
+					if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 30, -1);
+				} else if (this.direction & Compass.W) {		
+					if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 30, -1);
+				} else if (this.direction & Compass.E) {
+					if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 30, -1);
+				} else {
+					this.stop();
+				}
 		},
 
 		changeState: function (newstate) {
@@ -168,10 +169,12 @@ this.loadCraftyCharacterComponent = function () {
 		
 		attack: function () {
 
-console.log('attack, tulipes');
+			var that = this;
+			that.attacking = true;
+			setTimeout(function() { that.attacking = false }, 200);
 
 			if (this.direction & Compass.N) {
-				if (!this.isPlaying('attack_up'))	this.stop().animate("attack_up", 10, 1);
+				if (!this.isPlaying('attack_up')) this.stop().animate("attack_up", 10, 1);
 			} else if (this.direction & Compass.S) {
 				if (!this.isPlaying('attack_down')) this.stop().animate("attack_down", 10, 1);
 			} else if (this.direction & Compass.W) {		
@@ -342,7 +345,7 @@ this.changeDirection = function (direction) {
 	if (!direction && this.autoMove) return ;
 	this.autoMove = false;
 	if (this.showDebug) {
-		console.log("new direction '"+direction+"' (old was '"+((!this.player) ? 'unknown' : this.player.direction)+"')")
+		//console.log("new direction '"+direction+"' (old was '"+((!this.player) ? 'unknown' : this.player.direction)+"')")
 	}
 	this.currentDir = direction ;
 	if (direction) {
