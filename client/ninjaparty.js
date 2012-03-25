@@ -42,6 +42,7 @@ this.pillars = [ ];
 
 // vitesse de jeu
 this.millisecondForAStep = 25;
+this.attackFrameNumber = 20;
 this.remainingMilliseconds = 0;
 this.lastStepTime = null;
 
@@ -174,17 +175,17 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		updateDirectionAnimation: function()
 		{
-				if (this.direction & Compass.N) {
-					if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 30, -1);
-				} else if (this.direction & Compass.S) {
-					if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 30, -1);
-				} else if (this.direction & Compass.W) {		
-					if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 30, -1);
-				} else if (this.direction & Compass.E) {
-					if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 30, -1);
-				} else {
-					this.stop();
-				}
+			if (this.direction & Compass.N) {
+				if (!this.isPlaying('attack_up'))	this.stop().animate("attack_up", 30, -1);
+			} else if (this.direction & Compass.S) {
+				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 30, -1);
+			} else if (this.direction & Compass.W) {		
+				if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 30, -1);
+			} else if (this.direction & Compass.E) {
+				if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 30, -1);
+			} else {
+				this.stop();
+			}
 		},
 
 		changeState: function (newstate) {
@@ -194,18 +195,17 @@ this.loadCraftyCharacterComponent = function () {
 		
 		attack: function () {
 
-			var that = this;
-			that.attacking = true;
-			setTimeout(function() { that.attacking = false }, 200);
+console.log(ninjaPartyController.ninjaParty);
+			this.attackFrameRemaining = ninjaPartyController.ninjaParty.attackFrameNumber;
 
 			if (this.direction & Compass.N) {
-				if (!this.isPlaying('attack_up')) this.stop().animate("attack_up", 10, 1);
+				if (!this.isPlaying('attack_up')) this.stop().animate("attack_up", 30, 2);
 			} else if (this.direction & Compass.S) {
-				if (!this.isPlaying('attack_down')) this.stop().animate("attack_down", 10, 1);
+				if (!this.isPlaying('attack_down')) this.stop().animate("attack_down", 30, 2);
 			} else if (this.direction & Compass.W) {		
-				if (!this.isPlaying('attack_left')) this.stop().animate("attack_left", 10, 1);
+				if (!this.isPlaying('attack_left')) this.stop().animate("attack_left", 30, 2);
 			} else if (this.direction & Compass.E) {
-				if (!this.isPlaying('attack_right')) this.stop().animate("attack_right", 10, 1);
+				if (!this.isPlaying('attack_right')) this.stop().animate("attack_right", 30, 2);
 			} else {
 				this.stop();
 			}
@@ -264,6 +264,9 @@ this.loadEngineBindings = function () {
 					c.bounce(); 
 					c.continueMove(steps, f); 
 				} 
+				if(c.attacking) {
+
+				}
 			} );
 		}
 		if (ninjaParty.showFps && ((f % ninjaParty.fpsCounter) == 0)) ninjaParty.countFPS(t);
@@ -341,7 +344,7 @@ this.loadServerPlayers = function (players) {
 			c.y = data.y ;
 			c.direction = data.direction ;
 			c.state = data.state ;
-			c.updateAnimation();
+			c.updateDirectionAnimation();
 		}
 		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
