@@ -324,9 +324,8 @@ this.loadServerPlayers = function (players) {
 		}
 		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
-		data.events.forEach( function (event, i) {
+		data.events.forEach( function (event, j) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
-			else if (event == Events.ATTACK) ninjaParty.characters[i].attack();
 			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
 			else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
 			else if (event == Events.KILLED) ninjaParty.characters[i].killed();
@@ -401,9 +400,7 @@ this.addPersistentDirection = function (direction, opposite) {
 
 this.getInputForActions = function (key) {
 	switch (key) {
-		case this.Keys.ATTACK:
-		break;
-	case this.Keys.ATTACK: 
+	case this.Keys.ATTACK:
 		this.attack();
 		break;
 	case this.Keys.SMOKE:
@@ -487,18 +484,20 @@ this.setPillar = function(index, data) {
 };
 
 this.endGame = function(data) {
-	// no ninja is moving anymore
 	this.characters.forEach(function(c,i) {
 		if (!c) return ;
 		c.state = c.state  & (~this.States.MOVING) ;
 	});
 	this.predictiveEngine = false;
-	// TODO - set if player has win
+	this.isEndWithTimeout = data.end.timeout ;
+	this.isKillerWin = data.end.isKillerWin ;
+	this.isPillarWin = data.end.isPillarWin ;
+	this.lastWinner = data.end.winner ;
+	this.isLastWinner = (this.playerId == this.lastWinner) ;
 };
 
 this.hasPlayerWin = function () {
-	// TODO - check if player win
-	return null;
+	return this.isLastWinner;
 };
 
 }
