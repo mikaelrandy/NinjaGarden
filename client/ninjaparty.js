@@ -86,27 +86,22 @@ this.initEngine = function() {
 		this.loadCraftyCharacterComponent();
 		this.loadCraftyPillarComponent();
 	}
-	this.resetAllCharacters() ;
 	this.initialized = true;
 };
 
-this.resetAllCharacters = function() {
-	this.player = null ;
-	this.characters.forEach( function (c) {
-		if (!c) return ;
-		if (c._children) {
-			for (var i = 0; i < x._children.length; i++) {
-				if (c._children[i].destroy) {
-					c._children[i].destroy();
-				}
+this.resetCharacter = function(i) {
+	var c = this.characters[c] ;
+	if (c._children) {
+		for (var i = 0; i < x._children.length; i++) {
+			if (c._children[i].destroy) {
+				c._children[i].destroy();
 			}
-			c._children = [];
 		}
-
-		Crafty.map.remove(c);
-		c.detach();
-	});
-	this.characters = [ ] ;
+		c._children = [];
+	}
+	Crafty.map.remove(c);
+	c.detach();
+	delete i in this.characters;
 };
 
 this.loadSprites = function() {
@@ -178,13 +173,12 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		updateDirectionAnimation: function()
 		{
+			// attackFrameRemaining decreased on enterFrame event
 			if(typeof this.attackFrameRemaining != 'undefined' && this.attackFrameRemaining > 0)
-			{
 				return;
-			}
 
 			if (this.direction & Compass.N) {
-				if (!this.isPlaying('attack_up'))	this.stop().animate("walk_up", 30, -1);
+				if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 30, -1);
 			} else if (this.direction & Compass.S) {
 				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 30, -1);
 			} else if (this.direction & Compass.W) {		
@@ -198,14 +192,16 @@ this.loadCraftyCharacterComponent = function () {
 
 		changeState: function (newstate) {
 			this.state = newstate ;
-			// TODO - change sprite if moving / not moving / stunned / dead ?
+			if (this.state == States.STUNNED) {
+				this.stunned();
+			} else if (this.state == States.DEAD) {
+				this.killed();
+			}
 		},
 		
 		attack: function () {
 
 			this.attackFrameRemaining = ninjaPartyController.ninjaParty.attackFrameNumber;
-
-			console.log('attack : remaining : ', this.attackFrameRemaining);
 
 			if (this.direction & Compass.N) {
 				if (!this.isPlaying('attack_up')) this.stop().animate("attack_up", ninjaPartyController.ninjaParty.attackFrameNumber, 0);
@@ -215,8 +211,6 @@ this.loadCraftyCharacterComponent = function () {
 				if (!this.isPlaying('attack_left')) this.stop().animate("attack_left", ninjaPartyController.ninjaParty.attackFrameNumber, 0);
 			} else if (this.direction & Compass.E) {
 				if (!this.isPlaying('attack_right')) this.stop().animate("attack_right", ninjaPartyController.ninjaParty.attackFrameNumber, 0);
-			} else {
-				this.stop();
 			}
 			// TODO - sound
 			// TODO - change sprite for some milliseconds
@@ -263,6 +257,8 @@ this.prepareGame = function (data) {
 
 this.initGame = function () {
 	this.remainingMilliseconds = 0;
+	this.characters.forEach( function (c) { c.toBeReseted = true ; c.x = -100 ; c.y = -100; });
+	this.player = null ;
 	this.lastStepTime = this.fpsTimer = this.startedTime = (new Date()).getTime() ;
 	console.log("play !");
 	Crafty.audio.play("open");
@@ -283,7 +279,6 @@ this.loadEngineBindings = function () {
 					c.bounce(); 
 					c.continueMove(steps, f); 
 				} 
-
 			} );
 		}
 		if (ninjaParty.showFps && ((f % ninjaParty.fpsCounter) == 0)) ninjaParty.countFPS(t);
@@ -359,8 +354,10 @@ this.loadServerPlayers = function (players) {
 						direction: data.direction, 
 						state: data.state
 				})
+			ninjaParty.characters[i].toBeReseted = false ;
 		} else {
 			var c = ninjaParty.characters[i] ;
+			c.toBeReseted = false ;
 			if (ninjaParty.showFrequentDebug) console.log("previous position = " + c.x + " , " + c.y ) ;
 			if (ninjaParty.showFrequentDebug) console.log("new position = " + data.x + " , " + data.y ) ;
 			c.x = data.x - ninjaParty.playerWidth / 4 ;
@@ -374,13 +371,22 @@ this.loadServerPlayers = function (players) {
 		ninjaParty.characters[i].changeState(data.state) ;
 		data.events.forEach( function (event, j) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
-			else if (event == Events.ATTACK) ninjaParty.characters[i].attack();
+			else if (event == Events.ATTACK)
+			{
+				console.log('attack response');
+				ninjaParty.characters[i].attack();
+			}
 			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
-			else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
-			else if (event == Events.KILLED) ninjaParty.characters[i].killed();
+			// else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
+			// else if (event == Events.KILLED) ninjaParty.characters[i].killed();
 			else if (event == Events.ON_PILLAR) ninjaParty.characters[i].onPillar();
 		}) ;
 	} ;
+	ninjaParty.characters.forEach( function (c,i) {
+		if (c.toBeReseted) {
+			ninjaParty.resetCharacter(i);
+		}
+	});
 };
 
 
@@ -447,8 +453,6 @@ this.addPersistentDirection = function (direction, opposite) {
 
 this.getInputForActions = function (key) {
 	switch (key) {
-		case this.Keys.ATTACK:
-		break;
 	case this.Keys.ATTACK: 
 		this.attack();
 		break;
@@ -533,10 +537,11 @@ this.setPillar = function(index, data) {
 };
 
 this.endGame = function(data) {
+	var States = this.States;
 	// no ninja is moving anymore
 	this.characters.forEach(function(c,i) {
 		if (!c) return ;
-		c.state = c.state  & (~this.States.MOVING) ;
+		c.state = c.state  & (~States.MOVING) ;
 	});
 	this.predictiveEngine = false;
 	// TODO - set if player has win
