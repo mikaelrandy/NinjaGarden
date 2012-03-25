@@ -6,6 +6,13 @@ Character = function () {
 }
 
 
+		
+// for rand direction
+Character.directions = [];
+for (var i in Config.Compass) { 
+	Character.directions.push(Config.Compass[i]) ; 
+}
+
 Character.prototype = {
 	init: function() {
 		this.x = Utils.rand(Config.Dists.MAP_WIDTH);
@@ -20,12 +27,6 @@ Character.prototype = {
 		};
 		this.decisionStack = [];
 		this.events = [];
-		
-		// for rand direction
-		this.directions = [];
-		for (var i in Config.Compass) { 
-			this.directions.push(Config.Compass[i]) ; 
-		}
 	},
 	addEvent: function(eventName) {
 		this.events.push(eventName);
@@ -52,7 +53,7 @@ Character.prototype = {
 		this.state = Config.States.DEAD;
 	},
 	getRandDir: function() {
-		return this.directions[Utils.rand(this.directions.length - 1)];
+		return Character.directions[Utils.rand(Character.directions.length - 1)];
 	},
 	getRandState: function() {
 		return Utils.rand(25) == 5 ? 0 : Config.States.MOVING;
