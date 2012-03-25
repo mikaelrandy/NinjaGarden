@@ -24,7 +24,7 @@ this.Keys = {
 
 // Config actions
 this.allowCheat = true;
-this.allowPlayerStop = false; // change to allow user to stop
+this.allowPlayerStop = true; // change to allow user to stop
 this.persistKeys = false;
 this.autoMove = false;
 this.startWithAutoMove = false; 
@@ -368,8 +368,9 @@ this.changeDirection = function (direction) {
 	if (direction) {
 		this.currentRealDir = direction;
 		this.currentState = this.States.MOVING ;
+	} else {
+		this.currentState = this.currentState & (~this.States.MOVING) ;
 	}
-	if (!direction) this.currentState = 0 ;
 	if (this.player && this.predictiveEngine) this.player.changeDirection(direction) ;
 	this.sendStatusToServer();
 };
