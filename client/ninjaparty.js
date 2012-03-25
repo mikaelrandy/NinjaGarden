@@ -300,7 +300,6 @@ this.loadServerPlayers = function (players) {
 		ninjaParty.characters[i].changeState(data.state) ;
 		data.events.forEach( function (event, i) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
-			else if (event == Events.ATTACK) ninjaParty.characters[i].attack();
 			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
 			else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
 			else if (event == Events.KILLED) ninjaParty.characters[i].killed();
@@ -375,9 +374,7 @@ this.addPersistentDirection = function (direction, opposite) {
 
 this.getInputForActions = function (key) {
 	switch (key) {
-		case this.Keys.ATTACK:
-		break;
-	case this.Keys.ATTACK: 
+	case this.Keys.ATTACK:
 		this.attack();
 		break;
 	case this.Keys.SMOKE:
