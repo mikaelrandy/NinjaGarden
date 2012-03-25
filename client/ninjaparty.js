@@ -29,7 +29,7 @@ this.persistKeys = false;
 this.autoMove = false;
 this.startWithAutoMove = true; 
 this.showDebug = true;
-this.showFrequentDebug = true;
+this.showFrequentDebug = false;
 this.currentDir = 0;
 this.currentRealDir = 0;
 this.currentState = 0;
@@ -247,7 +247,7 @@ this.setPlayerId = function (playerId) {
 	this.playerId = playerId ;
 	this.player = this.characters[this.playerId] ;
 	this.characters.forEach( function(p,i) { p.isMyPlayer = false ; });
-	this.player.isMyPlayer = true;
+	if (this.player) this.player.isMyPlayer = true;
 };
 
 this.startAutoMove = function () {
