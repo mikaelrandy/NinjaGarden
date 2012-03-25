@@ -61,6 +61,11 @@ Director.prototype = {
 					}
 					break;
 			}
+
+			// game is over! (probably but not garentee for a winner)
+			if(this.game.state == Config.GameStates.END) {
+				return false;
+			}
 		}
 
 		// checks pillars for real players that have moved
@@ -73,9 +78,10 @@ Director.prototype = {
 					player.character.stats.pillars.push(pillar.id);
 					player.character.addEvent(Config.Events.GET_PILLAR, {id: pillar.id});
 
+					// we have a winner!
 					if(player.character.stats.pillars.length == this.game.map.pillars.length) {
 						player.character.addEvent(Config.Events.WIN);
-						this.game.notifyWinner(player);
+						this.game.notifyWinner(player, false);
 					}
 				}
 			}
@@ -100,11 +106,15 @@ Director.prototype = {
 		// filter list so that only ninja in front of the curent player get attacked
 		for(var i in ninjasInArea) {
 			var characterInArea = ninjasInArea[i].character;
-			if(	   ((ninja.character.dir & Config.Compass.N) && characterInArea.y >= ninja.character.y)
-				|| ((ninja.character.dir & Config.Compass.S) && characterInArea.y <= ninja.character.y)
-				|| ((ninja.character.dir & Config.Compass.E) && characterInArea.x >= ninja.character.x)
-				|| ((ninja.character.dir & Config.Compass.W) && characterInArea.x <= ninja.character.x) ) {
-				attackableNinjas[i] = ninjasInArea[i];
+			// not the attacker...
+			if(characterInArea.id != ninja.character.id) {
+				// in good direction
+				if(	   ((ninja.character.dir & Config.Compass.N) && characterInArea.y >= ninja.character.y)
+					|| ((ninja.character.dir & Config.Compass.S) && characterInArea.y <= ninja.character.y)
+					|| ((ninja.character.dir & Config.Compass.E) && characterInArea.x >= ninja.character.x)
+					|| ((ninja.character.dir & Config.Compass.W) && characterInArea.x <= ninja.character.x) ) {
+					attackableNinjas[i] = ninjasInArea[i];
+				}
 			}
 		}
 	
@@ -115,7 +125,9 @@ Director.prototype = {
 				attackedNinja.character.isDead(); 
 				attackedNinja.character.addEvent(Config.Events.IS_DEAD);
 
-				// TODO: detecter si le joueur a agagné
+				if(this.getAlivePlayers().length <= 1) {
+					this.game.notifyWinner(player, true);
+				}
 			} else {
 				attackedNinja.character.isStunned(); 
 				attackedNinja.character.addEvent(Config.Events.IS_STUNNED);
@@ -148,6 +160,18 @@ Director.prototype = {
 		}
 
 		return found;
+	},
+
+	getAlivePlayers: function() {
+		var alivePlayers = [];
+		for(var i=0; i < this.ninjaStack.length; i++) {
+			var ninja = this.ninjaStack[i];
+			if(ninja.type == 'player' && ninja.character.canPlay()) {
+				alivePlayers.push(ninja);
+			}
+		}
+
+		return alivePlayers;
 	}
 }
 
