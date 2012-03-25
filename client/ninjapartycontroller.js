@@ -24,7 +24,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		this.ninjaParty = new NinjaParty() ;
 		this.ninjaParty.mapHeight = data.config.maps.height ;
 		this.ninjaParty.mapWidth = data.config.maps.width ;
-		this.ninjaParty.sendActionToServer = function (data) {
+		this.ninjaParty.reallySendActionToServer = function (data) {
 			ninjaPartyController.sendActionToServer(action, data) ;
 		}
 		this.ninjaParty.initEngine() ;
@@ -33,7 +33,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	}
 
 	this.sendActionToServer = function (data) {
-
+		// TODO : this.socket.emit('player.action', data);
 	}
 
 	this.initSocket = function(socket) {

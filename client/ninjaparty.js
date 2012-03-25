@@ -58,7 +58,7 @@ this.renderingMode = "Canvas";
 this.fpsCounter = 128;
 this.fpsTimer = (new Date()).getTime();
 this.showFps = false;
-this.predictiveEngine = false;
+this.predictiveEngine = false; // OFF if all movements are from server
 this.sounds = { 
 	open: "start2.wav" ,
 	tambour: "start.wav",
@@ -143,13 +143,19 @@ this.loadCraftyCharacterComponent = function () {
 
 		changeState: function (newstate) {
 			this.state = newstate ;
+			// TODO - change sprite if moving / not moving ?
 		},
 		
 		attack: function () {
+			// TODO - sound
+			// TODO - change sprite for some milliseconds
 		},
 		
 		smoke: function () {
+			// TODO - sound
+			// TODO - change sprite for some milliseconds
 		}
+		// TODO : other events and actions (sounds and sprite changes)
 	})
 };
 
@@ -252,6 +258,7 @@ this.loadServerPlayers = function (players) {
 		}
 		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
+		// TODO use data.events to call characters[i] events for sound and sprites changes
 	} ;
 };
 
@@ -273,6 +280,7 @@ this.getInputForInstantDirection = function  () {
 
 
 this.changeDirection = function (direction) {
+	// TODO, maybe some debug
 	if (!direction && !this.allowPlayerStop) return ;
 	if (!direction && this.autoMove) return ;
 	this.autoMove = false;
@@ -332,7 +340,7 @@ this.cheatAndFindOwnPlayer = function() {
 		this.player.cheated = false;
 	} else {
 		this.player.addComponent("Color");
-		this.player.color('rgb(255,0,0)');
+		this.player.color('rgba(255,0,0,64)');
 		this.player.cheated = true;
 	}
 	if (this.showDebug) console.log("CHEATING, my player is in red");
@@ -340,25 +348,27 @@ this.cheatAndFindOwnPlayer = function() {
 
 this.attack = function () {
 	if (this.showDebug) console.log("Attack ! (from me)") ;	
-	if (this.player) this.player.attack() ;
+	// TODO? if (this.player) this.player.attack() ;
 };
 
 this.smoke = function () {
 	if (this.showDebug) console.log("Smoke ! (from me)") ;	
-	if (this.player) this.player.smoke() ;
+	// TODO? if (this.player) this.player.smoke() ;
 };
 
 this.sendStatusToServer = function(action) {
+	// TODO : debug and check with server if correct syntax
 	action = action || 0 ;
-	this.sendActionToServer({
+	this.reallySendActionToServer({
 		direction: this.currentRealDir ,
 		state: this.currentState ,
 		action: action
 	}) ;
 
 }
-this.sendActionToServer = function() {
-
+this.reallySendActionToServer = function() {
+	// FAKE : do not touch, 
+	// will be overriden by ninjaPartyController#sendActionToServer
 }
 
 this.getSteps = function(t, f) {
