@@ -79,8 +79,9 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 			}
 		}
 		else {
-			var msg = "<br><small>Il restait "+ninjaParty.nbAlivePlayers+" ninjas cachés</small>" 
-						+ "<br><small>Vous aviez passé "+ninjaParty.player.stats.pillarValidated+" ninjas cachés</small>" ;
+			var msg = "" ;
+			if (ninjaParty.nbAlivePlayers > 1) msg += "<br><small>Il restait "+ninjaParty.nbAlivePlayers+" ninjas caché(s)</small>" ;
+			msg += "<br><small>Vous aviez passé "+ninjaParty.player.stats.pillarValidated+" pilier(s)</small>" ;
 			if (ninjaParty.isTimeout) {
 				ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.timeout'] + msg) ;
 			} else if (ninjaParty.isPillarWin) {
