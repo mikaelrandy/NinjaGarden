@@ -120,13 +120,16 @@ Game.prototype = {
 
 	processFrame: function() {
 
-		if(this.getTimeLeft() <= 0) {
+		if(this.state != this.config.gameStates.STARTED && this.getTimeLeft() <= 0) {
 			this.notifyTimeOver();
 			return;
 		}
 
 		this.director.processNewFrame();
-		this.sendMapUpdate();
+
+		if(this.state == this.config.gameStates.STARTED) {
+			this.sendMapUpdate();
+		}
 	},
 
 	sendMapUpdate: function() {

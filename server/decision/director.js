@@ -69,9 +69,11 @@ Director.prototype = {
 		}
 
 		// checks pillars for real players that have moved
+		//console.log(movedPlayers, pillar);
 		for(var i=0; i < this.game.map.pillars.length; i++) {
 			var pillar = this.game.map.pillars[i];
 			var playersInArea = this.findNinjasNear(movedPlayers, pillar.x, pillar.y, Config.Dists.PILLAR_AREA);
+		//console.log(movedPlayers, pillar);throw pillar;
 			for(var j in playersInArea) {
 				var player = playersInArea[j];
 				if(player.character.stats.pillars.indexOf(pillar.id) == -1) {
@@ -81,7 +83,7 @@ Director.prototype = {
 					// we have a winner!
 					if(player.character.stats.pillars.length == this.game.map.pillars.length) {
 						player.character.addEvent(Config.Events.WIN);
-						this.game.notifyWinner(player, false, false);
+						this.game.notifyWinner(player, false, true);
 					}
 				}
 			}
@@ -126,7 +128,7 @@ Director.prototype = {
 				attackedNinja.character.addEvent(Config.Events.IS_DEAD);
 
 				if(this.getAlivePlayers().length <= 1) {
-					this.game.notifyWinner(attackedNinja, true, false);
+					this.game.notifyWinner(ninja, true, false);
 				}
 			} else {
 				attackedNinja.character.isStunned(); 
