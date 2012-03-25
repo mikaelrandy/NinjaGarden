@@ -3,6 +3,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	this.socket = null;
 	this.messagePlaceHolder = messagePlaceHolder;
 	this.showDebug = true;
+	this.showFrequentDebug = false;
 
 	ninjaPartyController = this ;
 
@@ -29,6 +30,9 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		}
 		this.ninjaParty.initEngine() ;
 		this.displayFeedback(this.messages['engine.start']) ;
+		if (data.config.pillars) data.config.pillars.forEach(function (p,i) {
+			this.ninjaParty.setPillar(i, p);
+		});
 		this.initMapUpdate();
 	}
 
@@ -57,7 +61,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	}
 
 	this.map__update = function (data) {
-		//if (ninjaPartyController.showDebug) console.log("EVENT game.update", data) ;
+		if (ninjaPartyController.showFrequentDebug) console.log("EVENT game.update", data) ;
 		ninjaPartyController.ninjaParty.loadServerFrame(data);
 	}
 
