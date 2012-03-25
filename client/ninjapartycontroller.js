@@ -24,17 +24,19 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	}
 
 	this.initGame = function (data) {
-		this.ninjaParty = new NinjaParty() ;
-		this.ninjaParty.mapHeight = data.config.maps.height ;
-		this.ninjaParty.mapWidth = data.config.maps.width ;
-		this.ninjaParty.setPlayer(data.config.player);
-		this.ninjaParty.reallySendActionToServer = function (data) {
+		var ninjaParty ;
+		ninjaParty = this.ninjaParty = new NinjaParty() ;
+		ninjaParty.mapHeight = data.config.maps.height ;
+		ninjaParty.mapWidth = data.config.maps.width ;
+		ninjaParty.setPlayer(data.config.player);
+		ninjaParty.reallySendActionToServer = function (data) {
 			ninjaPartyController.sendActionToServer(data) ;
 		}
-		this.ninjaParty.initEngine() ;
+		ninjaParty.initEngine() ;
 		//this.displayFeedback(this.messages['engine.start']) ;
-		if (data.config.pillars) data.config.pillars.forEach(function (p,i) {
-			this.ninjaParty.setPillar(i, p);
+		data.config.maps.pillars.forEach(function (p,i) {
+			if (this.showDebug) console.log("Define pillar "+i+" with ",p) ;
+			ninjaParty.setPillar(i, p);
 		});
 		this.initMapUpdate();
 	}

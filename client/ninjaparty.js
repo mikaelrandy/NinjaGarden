@@ -115,6 +115,7 @@ this.loadSprites = function() {
 };
 
 this.loadCraftyPillarComponent = function() {
+	var renderingMode = this.renderingMode;
 	Crafty.c("Pillar", {
 		init: function() {
 			// bas haut droite gauche
