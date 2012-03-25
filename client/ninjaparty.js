@@ -192,9 +192,9 @@ this.loadCraftyCharacterComponent = function () {
 
 		changeState: function (newstate) {
 			this.state = newstate ;
-			if (this.state == this.States.STUNNED) {
+			if (this.state == States.STUNNED) {
 				this.stunned();
-			} else if (this.state == this.States.DEAD) {
+			} else if (this.state == States.DEAD) {
 				this.killed();
 			}
 		},
