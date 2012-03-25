@@ -484,9 +484,10 @@ this.setPillar = function(index, data) {
 };
 
 this.endGame = function(data) {
+	var States = this.States ;
 	this.characters.forEach(function(c,i) {
 		if (!c) return ;
-		c.state = c.state  & (~this.States.MOVING) ;
+		c.state = c.state  & (~ States.MOVING) ;
 	});
 	this.predictiveEngine = false;
 	this.isEndWithTimeout = data.end.timeout ;
