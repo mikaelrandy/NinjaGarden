@@ -70,7 +70,8 @@ io.sockets.on('connection', function(socket) {
     }
 
     // Check if player can join the game
-    if( !game.addPlayer(new Player(new Character())) ) {
+    var currentPlayer = new Player(new Character());
+    if( !game.addPlayer(currentPlayer) ) {
         socket.emit('game.cannot_join')
         // If player cannot join, avoid all event connection
         //return false;
@@ -78,10 +79,19 @@ io.sockets.on('connection', function(socket) {
     
     // Send initial map state
     socket.emit('map.init', {
+        var pillars: [];
+        for(var i = 0; i < game.map.pillars; i++) {
+            pillar = game.map.pillars[i];
+            pillars.push({'x': pillar.x, 'y': pillar.y, 'h': config.Dists.PILLAR_HEIGHT, 'w': config.Dists.PILLAR_WIDTH});
+        }
         config: {
             maps: {
                 'height': config.Dists.MAP_HEIGHT,
-                'width':  config.Dists.MAP_WIDTH
+                'width':  config.Dists.MAP_WIDTH,
+                'pillars': pillars
+            },
+            player: {
+                'id': currentPlayer.character.id
             }
         },
         state: []
