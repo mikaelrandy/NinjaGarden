@@ -28,9 +28,13 @@ Game.prototype = {
 
 	stop: function() {
 
-		if( this.timer != null )
-			this.timer.clear;
-		
+		if( this.timer != null ) {
+			clearTimeout(this.timer.clear);
+		}
+
+		if(this.state == this.config.gameStates.STARTED)	{
+			this.state = this.config.gameStates.END;
+		}	
 	},	
 
 	addPlayer: function(player) {
@@ -103,7 +107,7 @@ Game.prototype = {
 			this.notifyTimeOver();
 			return;
 		}
-		
+
 		this.director.processNewFrame();
 		this.sendMapUpdate();
 	},
@@ -137,12 +141,26 @@ Game.prototype = {
 		return this.gameEndTime == 0 ? 0 : this.gameEndTime - new Date().getTime();
 	},
 	// called by the directort (likely if a player got all pillars)
-	notifyWinner: function(winnerPlayer) {
-		// TODO: end the game
+	notifyWinner: function(winnerPlayer, isKillerWin) {
+		this.stop();
+		var frameDatas = this.getCurrentDatas();
+		frameDatas['end'] = {
+			'timeout' : false,
+			'winner'  : winnerPlayer.character.id,
+			'isKillerWin' : isKillerWin
+		}
+        Utils.emitAll(this.socket, 'map.end', frameDatas);
 	},
 	// called once time has expired
-	notifyTimeOver: function(winnerPlayer) {
-		// TODO: end the game
+	notifyTimeOver: function() {
+		this.stop();
+		var frameDatas = this.getCurrentDatas();
+		frameDatas['end'] = {
+			'timeout' : true,
+			'winner'  : false,
+			'isKillerWin' : false
+		}
+        Utils.emitAll(this.socket, 'map.end', frameDatas);
 	}
 };
 
