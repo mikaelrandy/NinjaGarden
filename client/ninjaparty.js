@@ -54,6 +54,8 @@ this.endTime = null;
 this.mapBackgroundImage = "images/sprites/room.png";
 this.playerHeight = 40;
 this.playerWidth = 40;
+this.mapWidth = 0;
+this.mapHeight = 0;
 this.renderingMode = "Canvas";
 this.fpsCounter = 128;
 this.fpsTimer = (new Date()).getTime();
@@ -73,14 +75,37 @@ this.sprites = {
 
 
 this.initEngine = function() {
-	Crafty.init(this.mapWidth, this.mapHeight);
-	Crafty.background('url('+this.mapBackgroundImage+')');
-	this.loadSprites();
-	for (var i in this.sounds) {
-		Crafty.audio.add(i, this.sounds[i]);
+	if (!this.initialized) {
+		Crafty.init(this.mapWidth, this.mapHeight);
+		Crafty.background('url('+this.mapBackgroundImage+')');
+		this.loadSprites();
+		for (var i in this.sounds) {
+			Crafty.audio.add(i, this.sounds[i]);
+		}
+		this.loadCraftyCharacterComponent();
+		this.loadCraftyPillarComponent();
 	}
-	this.loadCraftyCharacterComponent();
-	this.loadCraftyPillarComponent();
+	this.resetAllCharacters() ;
+	this.initialized = true;
+};
+
+this.resetAllCharacters = function() {
+	this.player = null ;
+	this.characters.forEach( function (c) {
+		if (!c) return ;
+		if (c._children) {
+			for (var i = 0; i < x._children.length; i++) {
+				if (c._children[i].destroy) {
+					c._children[i].destroy();
+				}
+			}
+			c._children = [];
+		}
+
+		Crafty.map.remove(c);
+		c.detach();
+	});
+	this.characters = [ ] ;
 };
 
 this.loadSprites = function() {
@@ -293,12 +318,13 @@ this.loadServerPlayers = function (players) {
 			if (ninjaParty.showFrequentDebug) console.log("new position = " + data.x + " , " + data.y ) ;
 			c.x = data.x ;
 			c.y = data.y ;
-			if (i != ninjaParty.playerId) c.direction = data.direction ;
+			c.direction = data.direction ;
 			c.state = data.state ;
+			c.updateAnimation();
 		}
 		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
-		data.events.forEach( function (event, i) {
+		data.events.forEach( function (event, j) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
 			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
 			else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
@@ -397,6 +423,7 @@ this.debugPosition = function () {
 };
 
 this.cheatAndFindOwnPlayer = function() {
+	if (!this.player) return;
 	if (this.player.cheated) {
 		this.player.color('rgba(255,0,0,0)');
 		this.player.cheated = false;
