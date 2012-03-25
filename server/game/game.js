@@ -50,6 +50,24 @@ Game.prototype = {
 		return true;
 	},
 
+	removePlayer: function(player) {
+		// Cannot delete player if game will start, is started or is finished
+		if( this.state >= this.config.gameStates.READY )
+			return false;
+
+		// Construct new stack without removed player
+		// NB : delete key from stack will keep unused key
+		var newStack = [];
+		for(var i = 0; i < this.playerStack.length; i++) {
+			if( this.playerStack[i].character.id != player.character.id ) {
+				newStack.push(this.playerStack[i]);
+			}
+		}
+		this.playerStack = newStack;
+
+		return false;
+	},
+
 	addBot: function(bot) {
 		if( this.botStack.length >= (this.config.game.MAX_NINJA - this.config.game.NB_PLAYER) )
 			return false;
