@@ -212,7 +212,8 @@ this.loadEngineBindings = function () {
 		if (!ninjaParty.persistKeys) ninjaParty.getInputForInstantDirection();
 		if (ninjaParty.predictiveEngine) {
 			var steps = ninjaParty.getSteps(t);
-			ninjaParty.characters.forEach( function(c) {  
+			ninjaParty.characters.forEach( function(c) { 
+				if (!c) return; 
 				if (c.state & States.MOVING) {
 					c.bounce(); 
 					c.continueMove(steps, f); 
@@ -245,7 +246,7 @@ this.setPlayer = function (player) {
 	if (player) {
 		this.playerId = player.id ;
 		if (this.showDebug) console.log("My player is ninja "+ this.playerId) ;
-		this.characters.forEach( function(p,i) { p.isMyPlayer = false ; });
+		this.characters.forEach( function(p,i) { if (!p) return ; p.isMyPlayer = false ; });
 	}
 	if ((this.playerId > 0) && this.characters[this.playerId]) {
 		this.player = this.characters[this.playerId] ;
@@ -344,7 +345,7 @@ this.changeDirection = function (direction) {
 		this.currentState = this.States.MOVING ;
 	}
 	if (!direction) this.currentState = 0 ;
-	if (this.player) this.player.changeDirection(direction) ;
+	if (this.player && this.predictiveEngine) this.player.changeDirection(direction) ;
 	this.sendStatusToServer();
 };
 
@@ -451,6 +452,7 @@ this.setPillar = function(index, data) {
 this.endGame = function(data) {
 	// no ninja is moving anymore
 	this.characters.forEach(function(c,i) {
+		if (!c) return ;
 		c.state = c.state  & (~this.States.MOVING) ;
 	});
 	this.predictiveEngine = false;
