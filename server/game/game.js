@@ -28,8 +28,9 @@ Game.prototype = {
 
 	stop: function() {
 
-		if( this.timer != null )
-			this.timer.clear();
+		if( this.timer != null ) {
+			clearTimeout(this.timer.clear);
+		}
 
 		if(this.state == this.config.gameStates.STARTED)	{
 			this.state = this.config.gameStates.END;
@@ -51,6 +52,24 @@ Game.prototype = {
 			this.state = this.config.gameStates.READY;
 
 		return true;
+	},
+
+	removePlayer: function(player) {
+		// Cannot delete player if game will start, is started or is finished
+		if( this.state >= this.config.gameStates.READY )
+			return false;
+
+		// Construct new stack without removed player
+		// NB : delete key from stack will keep unused key
+		var newStack = [];
+		for(var i = 0; i < this.playerStack.length; i++) {
+			if( this.playerStack[i].character.id != player.character.id ) {
+				newStack.push(this.playerStack[i]);
+			}
+		}
+		this.playerStack = newStack;
+
+		return false;
 	},
 
 	addBot: function(bot) {
@@ -160,6 +179,11 @@ Game.prototype = {
 			'isKillerWin' : false
 		}
         Utils.emitAll(this.socket, 'map.end', frameDatas);
+	},
+
+	notifyPlayerAction: function(player, actionData) {
+		var decision = new Decision(actionData.state, actionData.direction, actionData.action);
+		player.addNewDecision(decision);
 	}
 };
 

@@ -23,6 +23,7 @@ var Director            = require('./decision/director').Director;
 var Decision            = require('./decision/decision').Decision;
 
 var game                = new Game(config.GameStates, config.Games);
+var playerStack         = {};
 //*******
 
 // Handler
@@ -50,7 +51,6 @@ console.log('Server running at http://'+config.host+':'+config.port+'/');
 
 // On client connection, check game state and connect him
 io.sockets.on('connection', function(socket) {
-
     // Debug event
     if( config.debug ) {
 
@@ -76,6 +76,11 @@ io.sockets.on('connection', function(socket) {
         socket.emit('game.cannot_join')
         // If player cannot join, avoid all event connection
         //return false;
+    }
+    else
+    {
+        playerStack[socket.id] = currentPlayer;
+        console.log('Connect player "'+ playerStack[socket.id].character.id +'" (socket "'+ socket.id +'")');
     }
     
     // Send initial map state
@@ -106,14 +111,34 @@ io.sockets.on('connection', function(socket) {
     // Event on valid player (player.action)
     if( isValidPlayer ) {
         socket.on('player.action', function(data) { 
-            console.log('player.action', currentPlayer, data);
+            game.notifyPlayerAction(currentPlayer, data);
         });
     }
-});
 
-// On client disconnection
-io.sockets.on('disconnect', function(socket) {
-    // TODO : kill player but keep game started
+    // On client disconnection
+    socket.on('disconnect', function() {
+        // Kill player if always in stack
+        if( socket.id in playerStack ) {
+            //Get player to disconnect
+            currentPlayer = playerStack[socket.id];
+
+            console.log('Disconnect player "'+ currentPlayer.character.id +'" (socket "'+ socket.id +'")');
+            
+            // If game is started, kill player
+            if( game.state >= config.GameStates.READY ) {
+                currentPlayer.character.isDead();
+                console.log('player killed');
+            }
+            // Else, just remove player from stack to free place for another one 
+            else {
+                game.removePlayer(currentPlayer);
+                delete playerStack[socket.id];
+                console.log('player disconnected');
+            }
+        } else {
+            console.log('socket "'+ socket.io +'" not correspond to a connected player');
+        }
+    });
 });
 
 /**

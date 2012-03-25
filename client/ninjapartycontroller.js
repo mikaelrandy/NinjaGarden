@@ -27,11 +27,12 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		this.ninjaParty = new NinjaParty() ;
 		this.ninjaParty.mapHeight = data.config.maps.height ;
 		this.ninjaParty.mapWidth = data.config.maps.width ;
+		this.ninjaParty.setPlayer(data.config.player);
 		this.ninjaParty.reallySendActionToServer = function (data) {
 			ninjaPartyController.sendActionToServer(data) ;
 		}
 		this.ninjaParty.initEngine() ;
-		this.displayFeedback(this.messages['engine.start']) ;
+		//this.displayFeedback(this.messages['engine.start']) ;
 		if (data.config.pillars) data.config.pillars.forEach(function (p,i) {
 			this.ninjaParty.setPillar(i, p);
 		});
@@ -50,7 +51,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		socket.on('game.start', this.game__start) ;
 		socket.on('game.ready', this.game__ready) ;
 		socket.on('map.init', this.map__init) ;
-		socket.on('game.end', this.map__init) ;
+		socket.on('game.end', this.game__end) ;
 		this.displayFeedback(this.messages['connect.awaiting']) ;
 	}
 
