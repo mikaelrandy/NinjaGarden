@@ -256,7 +256,7 @@ this.loadCraftyCharacterComponent = function () {
 		},
 
 		onPillar: function() {
-			// TODO - sound
+			Crafty.audio.play("pillar");
 			// TODO - change sprite for some milliseconds
 		} 
 	})
