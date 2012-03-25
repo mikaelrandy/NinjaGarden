@@ -18,7 +18,7 @@ Director.prototype = {
 		for(var i=0; i < this.ninjaStack.length; i++) {
 			var ninja = this.ninjaStack[i];
 			// do not process characters that can't move
-			if(!ninja.character.canPlay()) {
+			if(ninja.type == 'player' && !ninja.character.canPlay()) {
 				continue;
 			}
 

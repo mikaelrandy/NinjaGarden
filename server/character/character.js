@@ -74,10 +74,14 @@ Character.prototype = {
 	},
 	// bounce against the border of the map
 	bounce: function() {
-		if ((this.dir & Config.Compass.N) && this.y <= 0) this.dir = this.dir - Config.Compass.N + Config.Compass.S ;
-		else if ((this.dir & Config.Compass.S) && this.y >= Config.Dists.MAP_HEIGHT - Config.Dists.PLAYER_HEIGHT) this.dir = this.dir - Config.Compass.S + Config.Compass.N ;
-		if ((this.dir & Config.Compass.W) && this.x <= 0) this.dir = this.dir - Config.Compass.W + Config.Compass.E ;
-		else if ((this.dir & Config.Compass.E) && this.x >= Config.Dists.MAP_WIDTH - Config.Dists.PLAYER_WIDTH) this.dir = this.dir - Config.Compass.E + Config.Compass.W ;		
+		if ((this.dir & Config.Compass.N) && this.y <= 0) 
+			this.dir = this.dir - Config.Compass.N + Config.Compass.S ;
+		else if ((this.dir & Config.Compass.S) && this.y >= Config.Dists.MAP_HEIGHT - Config.Dists.PLAYER_HEIGHT) 
+			this.dir = this.dir - Config.Compass.S + Config.Compass.N ;
+		if ((this.dir & Config.Compass.W) && this.x <= 0) 
+			this.dir = this.dir - Config.Compass.W + Config.Compass.E ;
+		else if ((this.dir & Config.Compass.E) && this.x >= Config.Dists.MAP_WIDTH - Config.Dists.PLAYER_WIDTH) 
+			this.dir = this.dir - Config.Compass.E + Config.Compass.W ;		
 	}
 }
 
