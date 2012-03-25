@@ -168,7 +168,8 @@ Game.prototype = {
 			'timeout' : false,
 			'isKillerWin' : isKillerWin,
 			'isPillarWin': 	isPillarWin,
-			'winner'  : winnerPlayer.character.id
+			'winner'  : winnerPlayer.character.id,
+			'nbAlivePlayers' : this.director.getAlivePlayers().length
 		}
         Utils.emitAll(this.socket, 'game.end', frameDatas);
 	},
@@ -180,7 +181,8 @@ Game.prototype = {
 			'timeout' : true,
 			'isKillerWin' : false,
 			'isPillarWin': 	false,
-			'winner'  : false
+			'winner'  : false,
+			'nbAlivePlayers' : this.director.getAlivePlayers().length
 		}
         Utils.emitAll(this.socket, 'game.end', frameDatas);
 	},

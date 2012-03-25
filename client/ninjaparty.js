@@ -410,8 +410,6 @@ this.loadServerPlayers = function (players) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
 			else if (event == Events.ATTACK) ninjaParty.characters[i].attack();
 			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
-			// else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
-			// else if (event == Events.KILLED) ninjaParty.characters[i].killed();
 			else if (event == Events.ON_PILLAR) ninjaParty.characters[i].onPillar();
 		}) ;
 	} ;

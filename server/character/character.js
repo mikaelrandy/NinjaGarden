@@ -28,6 +28,7 @@ Character.prototype = {
 		this.stats = {
 			'kills' :   [],
 			'smokesLeft' :  Config.Games.NB_SMOKE,
+			'lastSmoke' : new Date().getTime(),
 			'pillars' : [],	// PillarIds
 			'stunts' :  []
 		};
