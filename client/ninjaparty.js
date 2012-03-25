@@ -544,12 +544,6 @@ this.endGame = function(data) {
 		c.state = c.state  & (~States.MOVING) ;
 	});
 	this.predictiveEngine = false;
-	// TODO - set if player has win
-};
-
-this.hasPlayerWin = function () {
-	// TODO - check if player win
-	return null;
 };
 
 }
