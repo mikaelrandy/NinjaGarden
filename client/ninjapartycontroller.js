@@ -16,6 +16,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		'game.ready': "Sabre au fourreau, tout le monde est prêt ?",
 		'map.init': "On vient de vous donner un joli sabre, en attendant la suite",
 		'game.end.win': "<b>Victoire !!<b> <a href=''>nouvelle partie ?</a>",
+		'game.reset': "Un ninja a subtilement remis à zéro la partie <a href=''>recommencer ?</a>",
 		'game.end.loose': "<b>C'est mort pour vous, la partie est finie :(</b> <a href=''>nouvelle partie ?</a>"
 	} ;
 
@@ -54,6 +55,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		socket.on('game.ready', this.game__ready) ;
 		socket.on('map.init', this.map__init) ;
 		socket.on('game.end', this.game__end) ;
+		socket.on('game.reset', this.game__reset) ;
 		this.displayFeedback(this.messages['connect.awaiting']) ;
 	}
 
@@ -85,6 +87,11 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		if (ninjaPartyController.showDebug) console.log("EVENT game.ready", data) ;
 		ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.ready']) ;
 		ninjaPartyController.ninjaParty.prepareGame(data);
+	}
+
+	this.game__reset = function (data) {
+		if (ninjaPartyController.showDebug) console.log("EVENT game.reset", data) ;
+		ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.reset']) ;
 	}
 
 	this.game__cannot_join = function (data) {
