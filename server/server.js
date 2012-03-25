@@ -114,7 +114,6 @@ io.sockets.on('connection', function(socket) {
             game.notifyPlayerAction(currentPlayer, data);
         });
     }
-});
 
     // On client disconnection
     socket.on('disconnect', function() {
@@ -165,7 +164,7 @@ function sendGameState(socket) {
             // Game will start in few second
             setTimeout(function() {
                 utils.emitAll(socket, 'game.start');
-//                game.start(socket, utils);
+                game.start(socket, utils);
             }, count_down);
 
             // Game start !
