@@ -28,7 +28,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		this.ninjaParty.mapHeight = data.config.maps.height ;
 		this.ninjaParty.mapWidth = data.config.maps.width ;
 		this.ninjaParty.reallySendActionToServer = function (data) {
-			ninjaPartyController.sendActionToServer(action, data) ;
+			ninjaPartyController.sendActionToServer(data) ;
 		}
 		this.ninjaParty.initEngine() ;
 		this.displayFeedback(this.messages['engine.start']) ;
