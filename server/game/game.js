@@ -99,6 +99,11 @@ Game.prototype = {
 
 	processFrame: function() {
 
+		if(this.getTimeLeft() <= 0) {
+			this.notifyTimeOver();
+			return;
+		}
+		
 		this.director.processNewFrame();
 		this.sendMapUpdate();
 	},
@@ -133,6 +138,10 @@ Game.prototype = {
 	},
 	// called by the directort (likely if a player got all pillars)
 	notifyWinner: function(winnerPlayer) {
+		// TODO: end the game
+	},
+	// called once time has expired
+	notifyTimeOver: function(winnerPlayer) {
 		// TODO: end the game
 	}
 };
