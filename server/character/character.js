@@ -22,13 +22,13 @@ Character.prototype = {
 		this.stats = {
 			'kills' :   [],
 			'smokesLeft' :  Config.Games.NB_SMOKE,
-			'pillars' : {},	// PillarId : Timestamp
+			'pillars' : [],	// PillarIds
 			'stunts' :  []
 		};
 		this.decisionStack = [];
 		this.events = [];
 	},
-	addEvent: function(eventName) {
+	addEvent: function(eventName, eventDatas) {
 		this.events.push(eventName);
 
 		// TODO: need to be cleared after each export for client drawing

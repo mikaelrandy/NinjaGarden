@@ -69,16 +69,11 @@ Director.prototype = {
 			var playersInArea = this.findNinjasNear(movedPlayers, pillar.x, pillar.y, Config.Dists.PILLAR_AREA);
 			for(var j in playersInArea) {
 				var player = playersInArea[j];
-				if(typeof(player.character.stats.pillars[pillar.id]) == 'undefined') {
-					player.character.stats.pillars[pillar.id] = this.game.getCurrentTime();
-					player.character.addEvent(Config.Events.GET_PILLAR);
+				if(player.character.stats.pillars.indexOf(pillar.id) == -1) {
+					player.character.stats.pillars.push(pillar.id);
+					player.character.addEvent(Config.Events.GET_PILLAR, {id: pillar.id});
 
-					var nbFoundPillar = 0;
-					for(var k in player.character.stats.pillars) {
-						nbFoundPillar++;
-					}
-
-					if(nbFoundPillar == this.game.map.pillars.length) {
+					if(player.character.stats.pillars.length == this.game.map.pillars.length) {
 						player.character.addEvent(Config.Events.WIN);
 						this.game.notifyWinner(player);
 					}
@@ -120,6 +115,7 @@ Director.prototype = {
 				attackedNinja.character.isDead(); 
 				attackedNinja.character.addEvent(Config.Events.IS_DEAD);
 
+				// TODO: detecter si le joueur a agagné
 			} else {
 				attackedNinja.character.isStunned(); 
 				attackedNinja.character.addEvent(Config.Events.IS_STUNNED);
