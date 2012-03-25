@@ -27,9 +27,8 @@ Game.prototype = {
 	},
 
 	stop: function() {
-
 		if( this.timer != null ) {
-			clearTimeout(this.timer.clear);
+			clearTimeout(this.timer);
 		}
 
 		if(this.state == this.config.gameStates.STARTED)	{

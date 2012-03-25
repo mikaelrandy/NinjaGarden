@@ -322,7 +322,8 @@ this.loadServerPlayers = function (players) {
 			c.state = data.state ;
 			c.updateAnimation();
 		}
-		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
+		// if (i != ninjaParty.playerId) 
+		ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
 		data.events.forEach( function (event, j) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
@@ -343,9 +344,7 @@ this.countFPS = function (t) {
 
 this.getInputForInstantDirection = function  () {
 	var madir = 0 ;
-	if (!!Crafty.keydown[this.Keys.N]) {
-		madir += this.Compass.N ;
-	}
+	if (!!Crafty.keydown[this.Keys.N]) madir += this.Compass.N ;
 	else if (!!Crafty.keydown[this.Keys.S]) madir += this.Compass.S ;
 	if (!!Crafty.keydown[this.Keys.E]) madir += this.Compass.E ;
 	else if (!!Crafty.keydown[this.Keys.W]) madir += this.Compass.W ;
@@ -368,8 +367,9 @@ this.changeDirection = function (direction) {
 	if (direction) {
 		this.currentRealDir = direction;
 		this.currentState = this.States.MOVING ;
+	} else {
+		this.currentState = this.currentState & (~this.States.MOVING) ;
 	}
-	if (!direction) this.currentState = 0 ;
 	if (this.player && this.predictiveEngine) this.player.changeDirection(direction) ;
 	this.sendStatusToServer();
 };
@@ -429,10 +429,10 @@ this.cheatAndFindOwnPlayer = function() {
 		this.player.cheated = false;
 	} else {
 		this.player.addComponent("Color");
-		this.player.color('rgba(255,0,0,25)');
+		this.player.color('rgb(255,0,0)');
+		if (this.showDebug) console.log("CHEATING, my player is in red");
 		this.player.cheated = true;
 	}
-	if (this.showDebug) console.log("CHEATING, my player is in red");
 };
 
 this.attack = function () {
