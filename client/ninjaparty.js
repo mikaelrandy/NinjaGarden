@@ -429,10 +429,10 @@ this.cheatAndFindOwnPlayer = function() {
 		this.player.cheated = false;
 	} else {
 		this.player.addComponent("Color");
-		this.player.color('rgba(255,0,0,25)');
+		this.player.color('rgb(255,0,0)');
+		if (this.showDebug) console.log("CHEATING, my player is in red");
 		this.player.cheated = true;
 	}
-	if (this.showDebug) console.log("CHEATING, my player is in red");
 };
 
 this.attack = function () {
