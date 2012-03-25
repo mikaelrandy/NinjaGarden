@@ -350,6 +350,7 @@ this.loadServerPlayers = function (players) {
 						direction: data.direction, 
 						state: data.state
 				})
+			ninjaParty.characters[i].toBeReseted = false ;
 		} else {
 			var c = ninjaParty.characters[i] ;
 			c.toBeReseted = false ;
@@ -361,11 +362,6 @@ this.loadServerPlayers = function (players) {
 			c.state = data.state ;
 			c.updateDirectionAnimation();
 		}
-		ninjaParty.characters.forEach( function (c,i) {
-			if (c.toBeReseted) {
-				ninjaParty.resetCharacter(i);
-			}
-		});
 		// if (i != ninjaParty.playerId) 
 		ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
@@ -382,6 +378,11 @@ this.loadServerPlayers = function (players) {
 			else if (event == Events.ON_PILLAR) ninjaParty.characters[i].onPillar();
 		}) ;
 	} ;
+	ninjaParty.characters.forEach( function (c,i) {
+		if (c.toBeReseted) {
+			ninjaParty.resetCharacter(i);
+		}
+	});
 };
 
 
