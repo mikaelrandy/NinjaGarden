@@ -24,7 +24,7 @@ this.Keys = {
 
 // Config actions
 this.allowCheat = true;
-this.allowPlayerStop = true; // change to allow user to stop
+this.allowPlayerStop = false; // change to allow user to stop
 this.persistKeys = false;
 this.autoMove = false;
 this.startWithAutoMove = false; 
@@ -322,7 +322,8 @@ this.loadServerPlayers = function (players) {
 			c.state = data.state ;
 			c.updateAnimation();
 		}
-		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
+		// if (i != ninjaParty.playerId) 
+		ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
 		data.events.forEach( function (event, j) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
