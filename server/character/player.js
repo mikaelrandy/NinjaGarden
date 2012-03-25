@@ -30,13 +30,13 @@ Player.prototype = {
 	addNewDecision: function(decision) {
 		var newDecisionEntry = {
 			'decision' : decision,
-			'duration' : 1
+			'duration' : decision.isEvent() ? Config.Times.NB_FRAME_SEC * 3 : 1
 		}
 
 		if(decision.isEvent()) {
 			this.character.decisionStack.push(newDecisionEntry);
 		} else {
-			this.character.decisionStack([newDecisionEntry]);
+			this.character.decisionStack.push(newDecisionEntry);
 		}
 	}
 }
