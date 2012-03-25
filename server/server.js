@@ -90,6 +90,8 @@ io.sockets.on('connection', function(socket) {
 
     // Reset game
     socket.on('game.reset', function() {
+        // Inform player that one client just reset the game
+        socket.broadcast.emit('game.reset');
         game.stop();
         game = new Game(config.GameStates, config.Games);
         initPlayer(socket);
