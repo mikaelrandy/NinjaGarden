@@ -1,11 +1,11 @@
-var counter = 1;
+
 
 Character = function () {
-	this.id = counter++;
+	this.id = Character.counter++;
 	this.init();
 }
 
-
+Character.counter = 1;
 		
 // for rand direction
 Character.directions = [];
