@@ -71,7 +71,8 @@ io.sockets.on('connection', function(socket) {
 
     // Check if player can join the game
     var currentPlayer = new Player(new Character());
-    if( !game.addPlayer(currentPlayer) ) {
+    var isValidPlayer = game.addPlayer(currentPlayer);
+    if( !isValidPlayer ) {
         socket.emit('game.cannot_join')
         // If player cannot join, avoid all event connection
         //return false;
@@ -92,7 +93,7 @@ io.sockets.on('connection', function(socket) {
                 'pillars': pillars
             },
             player: {
-                'id': currentPlayer.character.id
+                'id': isValidPlayer ? currentPlayer.character.id : -1
             }
         },
         state: []
