@@ -429,7 +429,7 @@ this.cheatAndFindOwnPlayer = function() {
 		this.player.cheated = false;
 	} else {
 		this.player.addComponent("Color");
-		this.player.color('rgba(255,0,0,25)');
+		this.player.color('rgba(255,0,0,64)');
 		this.player.cheated = true;
 	}
 	if (this.showDebug) console.log("CHEATING, my player is in red");
@@ -484,10 +484,9 @@ this.setPillar = function(index, data) {
 };
 
 this.endGame = function(data) {
-	var States = this.States ;
 	this.characters.forEach(function(c,i) {
 		if (!c) return ;
-		c.state = c.state  & (~ States.MOVING) ;
+		c.state = c.state  & (~this.States.MOVING) ;
 	});
 	this.predictiveEngine = false;
 	this.isEndWithTimeout = data.end.timeout ;
