@@ -102,9 +102,14 @@ Director.prototype = {
 		ninja.character.addEvent(Config.Events.ATTACK);
 		ninja.character.state = 0;	// a l'arret
 
+
+
 		var attackableNinjas = {};
 		var ninjasInArea = this.findNinjasNear(this.ninjaStack, ninja.character.x, ninja.character.y, Config.Dists.ATTACKABLE);
 		
+		if(new Date().getTime() - ninja.character.stats.lastAttack > Config.Times.DELAY_BETWEEN_SMOKE * 1000) {
+			ninja.character.stats.lastAttack = new Date().getTime();
+		}
 
 //console.log(ninjasInArea, this.ninjaStack); throw a;
 

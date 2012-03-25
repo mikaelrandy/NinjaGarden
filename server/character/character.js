@@ -29,6 +29,7 @@ Character.prototype = {
 			'kills' :   [],
 			'smokesLeft' :  Config.Games.NB_SMOKE,
 			'lastSmoke' : new Date().getTime(),
+			'lastAttack' : new Date().getTime(),
 			'pillars' : [],	// PillarIds
 			'stunts' :  []
 		};
