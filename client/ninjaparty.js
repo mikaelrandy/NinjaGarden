@@ -537,10 +537,11 @@ this.setPillar = function(index, data) {
 };
 
 this.endGame = function(data) {
+	var States = this.States;
 	// no ninja is moving anymore
 	this.characters.forEach(function(c,i) {
 		if (!c) return ;
-		c.state = c.state  & (~this.States.MOVING) ;
+		c.state = c.state  & (~States.MOVING) ;
 	});
 	this.predictiveEngine = false;
 	// TODO - set if player has win
