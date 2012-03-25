@@ -65,6 +65,7 @@ this.predictiveEngine = false; // OFF if all movements are from server
 this.sounds = { 
 	open: "start2.wav" ,
 	tambour: "start.wav",
+	pillar: "start2.wav"
 };
 this.sprites = {
 	ninja: {
