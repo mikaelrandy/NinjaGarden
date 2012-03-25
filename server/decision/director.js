@@ -100,11 +100,14 @@ Director.prototype = {
 	computeAttackAction: function(ninja, decision) {
 
 		ninja.character.addEvent(Config.Events.ATTACK);
-		ninja.character.state = null;	// a l'arret
+		ninja.character.state = 0;	// a l'arret
 
 		var attackableNinjas = {};
 		var ninjasInArea = this.findNinjasNear(this.ninjaStack, ninja.character.x, ninja.character.y, Config.Dists.ATTACKABLE);
 		
+
+//console.log(ninjasInArea, this.ninjaStack); throw a;
+
 		// filter list so that only ninja in front of the curent player get attacked
 		for(var i in ninjasInArea) {
 			var characterInArea = ninjasInArea[i].character;
@@ -158,7 +161,7 @@ Director.prototype = {
 				diffX = ninja.character.x - x,
 				diffY = ninja.character.y - y;
 			if(ninja.character.canPlay() && diffX * diffX + diffY * diffY <= cmpMaxDist) {
-				found[ninja.id] = ninja; 
+				found[ninja.character.id] = ninja; 
 			}
 		}
 
