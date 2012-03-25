@@ -172,17 +172,17 @@ this.loadCraftyCharacterComponent = function () {
 		smoke: function () {
 			// TODO - sound
 			// TODO - change sprite for some milliseconds
-		}
+		},
 
 		stunned: function () {
 			// TODO - sound
 			// TODO - change sprite for some milliseconds
-		}
+		},
 
 		killed: function() {
 			// TODO - sound
 			// TODO - change sprite for some milliseconds
-		}
+		},
 
 		onPillar: function() {
 			// TODO - sound
