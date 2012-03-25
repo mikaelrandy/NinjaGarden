@@ -36,7 +36,7 @@ Player.prototype = {
 		if(decision.isEvent()) {
 			this.character.decisionStack.push(newDecisionEntry);
 		} else {
-			this.character.decisionStack([newDecisionEntry]);
+			this.character.decisionStack.push(newDecisionEntry);
 		}
 	}
 }

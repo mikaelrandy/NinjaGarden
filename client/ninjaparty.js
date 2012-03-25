@@ -27,7 +27,7 @@ this.allowCheat = true;
 this.allowPlayerStop = false; // change to allow user to stop
 this.persistKeys = false;
 this.autoMove = false;
-this.startWithAutoMove = true; 
+this.startWithAutoMove = false; 
 this.showDebug = true;
 this.showFrequentDebug = false;
 this.currentDir = 0;
@@ -37,7 +37,7 @@ this.currentState = 0;
 // Liste des personnages à l'écran
 this.characters = [ ];
 this.player = null;
-this.playerId = NaN;
+this.playerId = -1;
 this.pillars = [ ];
 
 // vitesse de jeu
@@ -209,10 +209,11 @@ this.loadEngineBindings = function () {
 	Crafty.bind("EnterFrame", function() {
 		var t = (new Date()).getTime();
 		var f = Crafty.frame();
-		if (!ninjaParty.persistKeys && ninjaParty.player) ninjaParty.getInputForInstantDirection();
+		if (!ninjaParty.persistKeys) ninjaParty.getInputForInstantDirection();
 		if (ninjaParty.predictiveEngine) {
 			var steps = ninjaParty.getSteps(t);
-			ninjaParty.characters.forEach( function(c) {  
+			ninjaParty.characters.forEach( function(c) { 
+				if (!c) return; 
 				if (c.state & States.MOVING) {
 					c.bounce(); 
 					c.continueMove(steps, f); 
@@ -230,9 +231,9 @@ this.loadEngineBindings = function () {
 }
 
 this.loadServerFrame = function (frame) {
+	if (!this.player) this.setPlayer();
 	this.loadServerPlayers(frame.ninjas) ;
 	this.loadServerTimes(frame.times);
-	this.setPlayerId(frame.playerId);
 	if (this.startWithAutoMove) this.startAutoMove() ;
 };
 
@@ -241,15 +242,22 @@ this.loadServerTimes = function (times) {
 	this.endTime = times.left ;
 }
 
-this.setPlayerId = function (playerId) {
-	this.playerId = playerId ;
-	this.player = this.characters[this.playerId] ;
-	this.characters.forEach( function(p,i) { p.isMyPlayer = false ; });
-	if (this.player) this.player.isMyPlayer = true;
+this.setPlayer = function (player) {
+	if (player) {
+		this.playerId = player.id ;
+		if (this.showDebug) console.log("My player is ninja "+ this.playerId) ;
+		this.characters.forEach( function(p,i) { if (!p) return ; p.isMyPlayer = false ; });
+	}
+	if ((this.playerId > 0) && this.characters[this.playerId]) {
+		this.player = this.characters[this.playerId] ;
+		this.player.isMyPlayer = true;
+	}
 };
 
 this.startAutoMove = function () {
+	if (this.showDebug) console.log("by startWithAutoMove") ;
 	this.changeDirection( this.getRandomDirection() );
+	this.startWithAutoMove = false;
 	this.autoMove = true ;
 };
 
@@ -310,21 +318,26 @@ this.countFPS = function (t) {
 
 this.getInputForInstantDirection = function  () {
 	var madir = 0 ;
-	if (!!Crafty.keydown[this.Keys.N]) madir += this.Compass.N ;
+	if (!!Crafty.keydown[this.Keys.N]) {
+		madir += this.Compass.N ;
+	}
 	else if (!!Crafty.keydown[this.Keys.S]) madir += this.Compass.S ;
 	if (!!Crafty.keydown[this.Keys.E]) madir += this.Compass.E ;
 	else if (!!Crafty.keydown[this.Keys.W]) madir += this.Compass.W ;
-	if (!this.player || (this.player.direction != madir)) this.changeDirection(madir) ;
+	// if (this.showDebug && madir) console.log("by getInputForInstantDirection : ", madir) ;
+	if ((this.currentDir != madir) && (madir || !this.autoMove)) {
+		this.changeDirection(madir) ;
+	}
 };
 
 
 this.changeDirection = function (direction) {
 	// TODO - maybe some debug
-	if (!direction && !this.allowPlayerStop) return ;
-	if (!direction && this.autoMove) return ;
+	if (!direction && !this.allowPlayerStop) return ; //console.log("do not allow player stop");
+	if (!direction && this.autoMove) return ; //console.log("still autoMove"); ;
 	this.autoMove = false;
 	if (this.showDebug) {
-		console.log("new direction '"+direction+"' (old was '"+((!this.player) ? 'unknown' : this.player.direction)+"')")
+		console.log("new direction '"+direction+"' (old was '"+this.currentDir+"')")
 	}
 	this.currentDir = direction ;
 	if (direction) {
@@ -332,7 +345,7 @@ this.changeDirection = function (direction) {
 		this.currentState = this.States.MOVING ;
 	}
 	if (!direction) this.currentState = 0 ;
-	if (this.player) this.player.changeDirection(direction) ;
+	if (this.player && this.predictiveEngine) this.player.changeDirection(direction) ;
 	this.sendStatusToServer();
 };
 
@@ -354,18 +367,31 @@ this.addPersistentDirection = function (direction, opposite) {
 	var madir = this.currentDir;
 	if (madir & opposite) madir -= opposite ;
 	else if (((madir & direction) == 0)) madir += direction ;
-	if (!this.player || (this.player.direction != madir)) this.changeDirection(madir) ;
+	if (!this.player || (this.player.direction != madir)) {
+		if (this.showDebug) console.log("by addPersistentDirection");
+		this.changeDirection(madir) ;
+	}
 };
 
 this.getInputForActions = function (key) {
-	if (key == this.Keys.ATTACK) { 
-		this.attack() ;
-	} else if (key == this.Keys.SMOKE) {
-		this.smoke() ;
-	} else if (key == this.Keys.DEBUG) {
+	switch (key) {
+		case this.Keys.ATTACK:
+		break;
+	case this.Keys.ATTACK: 
+		this.attack();
+		break;
+	case this.Keys.SMOKE:
+		this.smoke();
+		break;
+	case this.Keys.DEBUG:
 		this.debugPosition();
-	} else if (key == this.Keys.CHEAT) {
-		this.cheatAndFindOwnPlayer();	
+		break;
+	case this.Keys.CHEAT:
+		this.cheatAndFindOwnPlayer();
+		break;
+	default:
+		console.log(key);
+		break;
 	}
 };
 
@@ -436,6 +462,7 @@ this.setPillar = function(index, data) {
 this.endGame = function(data) {
 	// no ninja is moving anymore
 	this.characters.forEach(function(c,i) {
+		if (!c) return ;
 		c.state = c.state  & (~this.States.MOVING) ;
 	});
 	this.predictiveEngine = false;
