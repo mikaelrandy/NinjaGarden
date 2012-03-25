@@ -7,7 +7,7 @@ this.Compass = { N:1, E:2, S:4, W:8, NE:3, NW:9, SE:6, SW: 12};
 this.Directions = [ ] ;
 for (var i in this.Compass) { this.Directions.push(this.Compass[i]) ; } ;
 this.States = { WAITING:0, MOVING:1, STUNNED: 2, DEAD: 4 };
-this.Events = { NOACTION:0, ATTACK:1, SMOKE:2 };
+this.Events = { NOACTION:0, ATTACK:1, SMOKE:2, KILLED:4, STUNNED:8, ON_PILLAR:16 };
 
 // Mapping touches -> action
 this.Keys = { 
@@ -24,10 +24,10 @@ this.Keys = {
 
 // Config actions
 this.allowCheat = true;
-this.allowPlayerStop = false;
+this.allowPlayerStop = false; // change to allow user to stop
 this.persistKeys = false;
 this.autoMove = false;
-this.startWithAutoMove = true;
+this.startWithAutoMove = true; 
 this.showDebug = true;
 this.currentDir = 0;
 this.currentRealDir = 0;
@@ -99,12 +99,12 @@ this.loadCraftyCharacterComponent = function () {
 	var showDebug = this.showDebug ;
 	Crafty.c("Character", {
 		state: States.MOVING ,
+		isMyPlayer: false,
 		bounce: function() {
 			if ((this.direction & Compass.N) && this.y <= 0) this.direction = this.direction - Compass.N + Compass.S ;
 			else if ((this.direction & Compass.S) && this.y >= mapHeight - playerHeight) this.direction = this.direction - Compass.S + Compass.N ;
 			if ((this.direction & Compass.W) && this.x <= 0) this.direction = this.direction - Compass.W + Compass.E ;
 			else if ((this.direction & Compass.E) && this.x >= mapWidth - playerWidth) this.direction = this.direction - Compass.E + Compass.W ;
-
 			this.updateAnimation();
 		},
 		continueMove: function(step) {
@@ -115,6 +115,7 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		init: function() {
 			// bas haut droite gauche
+			this.origin
 			this.addComponent("2D, "+renderingMode+", Ninja, SpriteAnimation");
 			this.animate("walk_down", 0, 0, 2)
 				.animate("walk_up", 0, 1, 2)
@@ -143,7 +144,7 @@ this.loadCraftyCharacterComponent = function () {
 
 		changeState: function (newstate) {
 			this.state = newstate ;
-			// TODO - change sprite if moving / not moving ?
+			// TODO - change sprite if moving / not moving or stunned / dead ?
 		},
 		
 		attack: function () {
@@ -160,7 +161,16 @@ this.loadCraftyCharacterComponent = function () {
 			// TODO - sound
 			// TODO - change sprite for some milliseconds
 		}
-		// TODO : other events and actions (sounds and sprite changes)
+
+		killed: function() {
+			// TODO - sound
+			// TODO - change sprite for some milliseconds
+		}
+
+		onPillar: function() {
+			// TODO - sound
+			// TODO - change sprite for some milliseconds
+		} 
 	})
 };
 
@@ -219,6 +229,8 @@ this.loadServerTimes = function (times) {
 this.setPlayerId = function (playerId) {
 	this.playerId = playerId ;
 	this.player = this.characters[this.playerId] ;
+	this.characters.forEach( function(p,i) { p.isMyPlayer = false ; });
+	this.player.isMyPlayer = true;
 };
 
 this.startAutoMove = function () {
@@ -234,6 +246,7 @@ this.loadServerPlayers = function (players) {
 	var ninjaParty = this;
 	var playerHeight = this.playerHeight;
 	var playerWidth = this.playerHeight;
+	var Events = this.Events ;
 	for (var i in players) {
 		var data = players[i] ;
 		data.x = data[0];
@@ -253,8 +266,8 @@ this.loadServerPlayers = function (players) {
 				})
 		} else {
 			var c = ninjaParty.characters[i] ;
-			console.log("previous position = " + c.x + " , " + c.y ) ;
-			console.log("new position = " + data.x + " , " + data.y ) ;
+			// if (ninjaParty.showDebug) console.log("previous position = " + c.x + " , " + c.y ) ;
+			// if (ninjaParty.showDebug) console.log("new position = " + data.x + " , " + data.y ) ;
 			c.x = data.x ;
 			c.y = data.y ;
 			if (i != ninjaParty.playerId) c.direction = data.direction ;
@@ -262,7 +275,14 @@ this.loadServerPlayers = function (players) {
 		}
 		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
-		// TODO use data.events to call characters[i] events for sound and sprites changes
+		data.events.forEach( function (event, i) {
+			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
+			else if (event == Events.ATTACK) ninjaParty.characters[i].attack();
+			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
+			else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
+			else if (event == Events.KILLED) ninjaParty.characters[i].killed();
+			else if (event == Events.ON_PILLAR) ninjaParty.characters[i].onPillar();
+		}) ;
 	} ;
 };
 
@@ -353,13 +373,13 @@ this.cheatAndFindOwnPlayer = function() {
 this.attack = function () {
 	if (this.showDebug) console.log("Attack ! (from me)") ;	
 	this.sendStatusToServer(this.Events.ATTACK);
-	// TODO? if (this.player) this.player.attack() ;
+	// (done when server send action:) if (this.player) this.player.attack() ;
 };
 
 this.smoke = function () {
 	if (this.showDebug) console.log("Smoke ! (from me)") ;
 	this.sendStatusToServer(this.Events.SMOKE);	
-	// TODO? if (this.player) this.player.smoke() ;
+	// (done when server send action:) if (this.player) this.player.smoke() ;
 };
 
 this.sendStatusToServer = function(action) {
