@@ -358,14 +358,24 @@ this.addPersistentDirection = function (direction, opposite) {
 };
 
 this.getInputForActions = function (key) {
-	if (key == this.Keys.ATTACK) { 
-		this.attack() ;
-	} else if (key == this.Keys.SMOKE) {
-		this.smoke() ;
-	} else if (key == this.Keys.DEBUG) {
+	switch (key) {
+		case this.Keys.ATTACK:
+		break;
+	case this.Keys.ATTACK: 
+		this.attack();
+		break;
+	case this.Keys.SMOKE:
+		this.smoke();
+		break;
+	case this.Keys.DEBUG:
 		this.debugPosition();
-	} else if (key == this.Keys.CHEAT) {
-		this.cheatAndFindOwnPlayer();	
+		break;
+	case this.Keys.CHEAT:
+		this.cheatAndFindOwnPlayer();
+		break;
+	default:
+		console.log(key);
+		break;
 	}
 };
 
