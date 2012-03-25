@@ -57,7 +57,8 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 
 	this.game__end = function (data) {
 		if (ninjaPartyController.showDebug) console.log("EVENT game.end", data) ;
-		ninjaPartyController.endGame(data);	
+		ninjaPartyController.ninjaParty.endGame(data);	
+		ninjaPartyController.ninjaParty.loadServerFrame(data);
 		var hasWin = ninjaPartyController.hasPlayerWin();
 		if (hasWin) ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.win']) ;
 		else ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.loose']) ;

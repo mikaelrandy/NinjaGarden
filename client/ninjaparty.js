@@ -487,18 +487,20 @@ this.setPillar = function(index, data) {
 };
 
 this.endGame = function(data) {
-	// no ninja is moving anymore
 	this.characters.forEach(function(c,i) {
 		if (!c) return ;
 		c.state = c.state  & (~this.States.MOVING) ;
 	});
 	this.predictiveEngine = false;
-	// TODO - set if player has win
+	this.isEndWithTimeout = data.end.timeout ;
+	this.isKillerWin = data.end.isKillerWin ;
+	this.isPillarWin = data.end.isPillarWin ;
+	this.lastWinner = data.end.winner ;
+	this.isLastWinner = (this.playerId == this.lastWinner) ;
 };
 
 this.hasPlayerWin = function () {
-	// TODO - check if player win
-	return null;
+	return this.isLastWinner;
 };
 
 }
