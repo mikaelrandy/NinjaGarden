@@ -318,7 +318,7 @@ this.loadServerPlayers = function (players) {
 			if (ninjaParty.showFrequentDebug) console.log("new position = " + data.x + " , " + data.y ) ;
 			c.x = data.x ;
 			c.y = data.y ;
-			if (i != ninjaParty.playerId) c.direction = data.direction ;
+			c.direction = data.direction ;
 			c.state = data.state ;
 			c.updateAnimation();
 		}
