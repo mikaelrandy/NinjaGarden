@@ -160,6 +160,8 @@ this.loadCraftyCharacterComponent = function () {
 				.animate("walk_up", 0, 1, 2)
 				.animate("walk_right", 0, 2, 2)
 				.animate("walk_left", 0, 3, 2)
+				.animate("stunned_left", 0, 8, 0)
+				.animate("stunned_right", 1, 8, 1)
 				.animate("attack_down", 0, 4, 2)
 				.animate("attack_up", 0, 5, 2)
 				.animate("attack_right", 0, 6, 2)
@@ -172,13 +174,12 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		updateDirectionAnimation: function()
 		{
+			// attackFrameRemaining decreased on enterFrame event
 			if(typeof this.attackFrameRemaining != 'undefined' && this.attackFrameRemaining > 0)
-			{
 				return;
-			}
 
 			if (this.direction & Compass.N) {
-				if (!this.isPlaying('attack_up'))	this.stop().animate("walk_up", 30, -1);
+				if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 30, -1);
 			} else if (this.direction & Compass.S) {
 				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 30, -1);
 			} else if (this.direction & Compass.W) {		
@@ -199,8 +200,6 @@ this.loadCraftyCharacterComponent = function () {
 
 			this.attackFrameRemaining = ninjaPartyController.ninjaParty.attackFrameNumber;
 
-			console.log('attack : remaining : ', this.attackFrameRemaining);
-
 			if (this.direction & Compass.N) {
 				if (!this.isPlaying('attack_up')) this.stop().animate("attack_up", ninjaPartyController.ninjaParty.attackFrameNumber, 0);
 			} else if (this.direction & Compass.S) {
@@ -209,8 +208,6 @@ this.loadCraftyCharacterComponent = function () {
 				if (!this.isPlaying('attack_left')) this.stop().animate("attack_left", ninjaPartyController.ninjaParty.attackFrameNumber, 0);
 			} else if (this.direction & Compass.E) {
 				if (!this.isPlaying('attack_right')) this.stop().animate("attack_right", ninjaPartyController.ninjaParty.attackFrameNumber, 0);
-			} else {
-				this.stop();
 			}
 			// TODO - sound
 			// TODO - change sprite for some milliseconds
@@ -222,13 +219,23 @@ this.loadCraftyCharacterComponent = function () {
 		},
 
 		stunned: function () {
-			// TODO - sound
-			// TODO - change sprite for some milliseconds
+			if (this.direction & Compass.W) {		
+				if (!this.isPlaying('stunned_right')) this.stop().animate("stunned_right", 15, 0);
+			} else if (this.direction) {
+				if (!this.isPlaying('stunned_left')) this.stop().animate("stunned_left", 15, 0);
+			} else {
+				this.stop();
+			}
 		},
 
 		killed: function() {
-			// TODO - sound
-			// TODO - change sprite for some milliseconds
+			if (this.direction & Compass.W) {		
+				if (!this.isPlaying('stunned_right')) this.stop().animate("stunned_right", 15, 0);
+			} else if (this.direction) {
+				if (!this.isPlaying('stunned_left')) this.stop().animate("stunned_left", 15, 0);
+			} else {
+				this.stop();
+			}
 		},
 
 		onPillar: function() {
@@ -363,7 +370,11 @@ this.loadServerPlayers = function (players) {
 		ninjaParty.characters[i].changeState(data.state) ;
 		data.events.forEach( function (event, j) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
-			else if (event == Events.ATTACK) ninjaParty.characters[i].attack();
+			else if (event == Events.ATTACK)
+			{
+				console.log('attack response');
+				ninjaParty.characters[i].attack();
+			}
 			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
 			else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
 			else if (event == Events.KILLED) ninjaParty.characters[i].killed();
@@ -436,8 +447,6 @@ this.addPersistentDirection = function (direction, opposite) {
 
 this.getInputForActions = function (key) {
 	switch (key) {
-		case this.Keys.ATTACK:
-		break;
 	case this.Keys.ATTACK: 
 		this.attack();
 		break;

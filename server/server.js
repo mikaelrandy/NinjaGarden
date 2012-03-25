@@ -53,15 +53,6 @@ console.log('Server running at http://'+config.host+':'+config.port+'/');
 io.sockets.on('connection', function(socket) {
     // Debug event
     if( config.debug ) {
-
-        // Reset game ()
-        socket.on('game.reset', function() {
-            game.stop();
-            game = new Game(config.GameStates, config.Games);
-            game.addPlayer(new Player(new Character(), socket.id));
-            sendGameState(socket);
-        });
-
         // This event will send an event back defined by data's first element
         // Data's second element will be send as data into back event
         socket.on('debug.ask', function(data) {
@@ -69,51 +60,7 @@ io.sockets.on('connection', function(socket) {
         });        
     }
 
-    // Check if player can join the game
-    var currentPlayer = new Player(new Character());
-    var isValidPlayer = game.addPlayer(currentPlayer);
-    if( !isValidPlayer ) {
-        socket.emit('game.cannot_join')
-        // If player cannot join, avoid all event connection
-        //return false;
-    }
-    else
-    {
-        playerStack[socket.id] = currentPlayer;
-        console.log('Connect player "'+ playerStack[socket.id].character.id +'" (socket "'+ socket.id +'")');
-    }
-    
-    // Send initial map state
-    var pillars = [];
-    for(var i = 0; i < game.map.pillars.length; i++) {
-        pillar = game.map.pillars[i];
-        pillars.push({'x': pillar.x, 'y': pillar.y, 'h': config.Dists.PILLAR_HEIGHT, 'w': config.Dists.PILLAR_WIDTH});
-    }
-
-    socket.emit('map.init', {
-        config: {
-            maps: {
-                'height': config.Dists.MAP_HEIGHT,
-                'width':  config.Dists.MAP_WIDTH,
-                'pillars': pillars
-            },
-            player: {
-                'id': isValidPlayer ? currentPlayer.character.id : -1
-            }
-        },
-        state: []
-    });
-    // 
-
-    // Client is now connected, send him game state
-    sendGameState(socket);
-
-    // Event on valid player (player.action)
-    if( isValidPlayer ) {
-        socket.on('player.action', function(data) { 
-            game.notifyPlayerAction(currentPlayer, data);
-        });
-    }
+    initPlayer(socket);
 
     // On client disconnection
     socket.on('disconnect', function() {
@@ -140,7 +87,71 @@ io.sockets.on('connection', function(socket) {
             console.log('socket "'+ socket.io +'" not correspond to a connected player');
         }
     });
+
+    // Reset game
+    socket.on('game.reset', function() {
+        game.stop();
+        game = new Game(config.GameStates, config.Games);
+        initPlayer(socket);
+    });
 });
+
+
+function initPlayer(socket) {
+    // Check if player can join the game
+    var currentPlayer = new Player(new Character(), socket.id);
+    // Is there slot to add client as player, or viewer
+    var isPlayer = game.addPlayer(currentPlayer);
+
+    // No more free slot
+    if( !isPlayer ) {
+        socket.emit('game.cannot_join')
+    }
+    // Player will play
+    else {
+        // Add player in the handle stack
+        playerStack[socket.id] = currentPlayer;
+        console.log('Connect player "'+ playerStack[socket.id].character.id +'" (socket "'+ socket.id +'")');
+
+        // Player can do actions
+        socket.on('player.action', function(data) { 
+            game.notifyPlayerAction(currentPlayer, data);
+        });
+    }
+
+    // Send game initialization for current client
+    sendGameInit(socket, isPlayer ? currentPlayer : undefined);
+}
+
+/**
+ *  Send init game state for a player
+ */
+function sendGameInit(socket, player)
+{
+    // Send initial map state
+    var pillars = [];
+    for(var i = 0; i < game.map.pillars.length; i++) {
+        pillar = game.map.pillars[i];
+        pillars.push({'x': pillar.x, 'y': pillar.y, 'h': config.Dists.PILLAR_HEIGHT, 'w': config.Dists.PILLAR_WIDTH});
+    }
+    
+    // Send init game state
+    socket.emit('map.init', {
+        config: {
+            maps: {
+                'height': config.Dists.MAP_HEIGHT,
+                'width':  config.Dists.MAP_WIDTH,
+                'pillars': pillars
+            },
+            player: {
+                'id': player != undefined ? player.character.id : -1
+            }
+        },
+        state: []
+    });
+
+    sendGameState(socket);
+}
 
 /**
  *  Regarding game state, send some event to clients

@@ -7,7 +7,7 @@
 	<script src="ninjaparty.js"></script>
 	<script src="ninjapartycontroller.js"></script>
 	<script src="ninja-fakeinit.js"></script>
-	<script src="http://192.168.1.24:1337/socket.io/socket.io.js"></script>
+	<script src="http://192.168.1.60:1338/socket.io/socket.io.js"></script>
 	<style></style>
 </head>
 
@@ -25,7 +25,7 @@ window.onload = function() {
 	}
 	setTimeout(function() {
 		console.log("onload");
-		var socket = io.connect('http://192.168.1.24:1337')  ;
+		var socket = io.connect('http://192.168.1.60:1338')  ;
 		ctrl.initSocket( socket ) ;
 	}, 500);
 }
