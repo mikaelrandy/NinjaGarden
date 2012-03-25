@@ -10,7 +10,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	this.messages = {
 		'connect.awaiting' : "Range ton sabre, tu n'es toujours pas connecté...",
 		'game.awaiting' : "Prépare ton sabre, on attend la partie...",
-		'game.cannot_join' : "Ninja de pacotille, pas même capable de rejoindre la partie... <a href='#' onclick='ctrl.resetGame()'>vires tout le monde d'ici pour prendre la place</a> ou <a href=''>sors de la salle de reviens dicrètement</a>",
+		'game.cannot_join' : "Ninja de pacotille, pas même capable de rejoindre la partie... <a href='' onclick='ctrl.resetGame()'>virer tout le monde d'ici pour prendre la place ?</a>",
 		'game.start' : "Sors ton sabre ! maintenant !!!",
 		'engine.start': "Les sabres ont été distribués, patience...",
 		'game.ready': "Sabre au fourreau, tout le monde est prêt ?",
@@ -61,7 +61,8 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		if (ninjaPartyController.showDebug) console.log("EVENT game.end", data) ;
 		ninjaPartyController.ninjaParty.endGame(data);	
 		ninjaPartyController.ninjaParty.loadServerFrame(data);
-		var hasWin = ninjaPartyController.ninjaParty.hasPlayerWin();
+		// Player win ?
+		var hasWin = (ninjaPartyController.ninjaParty.playerId == data.end.winner);
 		if (hasWin) ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.win']) ;
 		else ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.loose']) ;
 	}
@@ -100,11 +101,13 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		if (ninjaPartyController.showDebug) console.log("EVENT game.start", data) ;
 		ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.start']) ;
 		ninjaPartyController.startGame(data);
+		ninjaParty.prepareCharactersForReset() ;
 	}
 
 	this.resetGame = function () {
 		if (this.showDebug) console.log("SENDING EVENT game.reset") ;
 		this.socket.emit('game.reset') ;
+		ninjaParty.prepareCharactersForReset() ;
 	}
 
 	this.startGame = function(data) {

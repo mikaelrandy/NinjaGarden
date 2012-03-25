@@ -120,7 +120,7 @@ Game.prototype = {
 
 	processFrame: function() {
 
-		if(this.state != this.config.gameStates.STARTED && this.getTimeLeft() <= 0) {
+		if(this.state != this.config.gameStates.STARTED || this.getTimeLeft() <= 0) {
 			this.notifyTimeOver();
 			return;
 		}
