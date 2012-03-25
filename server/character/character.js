@@ -20,6 +20,12 @@ Character.prototype = {
 		};
 		this.decisionStack = [];
 		this.events = [];
+		
+		// for rand direction
+		this.directions = [];
+		for (var i in Config.Compass) { 
+			this.directions.push(Config.Compass[i]) ; 
+		}
 	},
 	addEvent: function(eventName) {
 		this.events.push(eventName);
@@ -46,11 +52,10 @@ Character.prototype = {
 		this.state = Config.States.DEAD;
 	},
 	getRandDir: function() {
-		var dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-		return Config.Compass[dirs[Utils.rand(dirs.length - 1)]];
+		return this.directions[Utils.rand(directions.length - 1)]];
 	},
 	getRandState: function() {
-		return Utils.rand(10) == 5 ? 0 : Config.States.MOVING;
+		return Utils.rand(25) == 5 ? 0 : Config.States.MOVING;
 	},
 	// move!
 	continueMove: function() {
