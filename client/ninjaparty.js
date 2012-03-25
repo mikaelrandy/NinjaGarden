@@ -86,27 +86,23 @@ this.initEngine = function() {
 		this.loadCraftyCharacterComponent();
 		this.loadCraftyPillarComponent();
 	}
-	this.resetAllCharacters() ;
+	this.characters.forEach( function (c) { c.toBeReseted = true ; c.x = -100 ; c.y = -100; });
 	this.initialized = true;
 };
 
-this.resetAllCharacters = function() {
-	this.player = null ;
-	this.characters.forEach( function (c) {
-		if (!c) return ;
-		if (c._children) {
-			for (var i = 0; i < x._children.length; i++) {
-				if (c._children[i].destroy) {
-					c._children[i].destroy();
-				}
+this.resetCharacter = function(i) {
+	var c = this.characters[c] ;
+	if (c._children) {
+		for (var i = 0; i < x._children.length; i++) {
+			if (c._children[i].destroy) {
+				c._children[i].destroy();
 			}
-			c._children = [];
 		}
-
-		Crafty.map.remove(c);
-		c.detach();
-	});
-	this.characters = [ ] ;
+		c._children = [];
+	}
+	Crafty.map.remove(c);
+	c.detach();
+	delete i in this.characters;
 };
 
 this.loadSprites = function() {
@@ -271,7 +267,6 @@ this.loadEngineBindings = function () {
 					c.bounce(); 
 					c.continueMove(steps, f); 
 				} 
-
 			} );
 		}
 		if (ninjaParty.showFps && ((f % ninjaParty.fpsCounter) == 0)) ninjaParty.countFPS(t);
@@ -279,7 +274,7 @@ this.loadEngineBindings = function () {
 		// decrease frame actions number
 		ninjaParty.characters.forEach( function(character) {
 			// attack
-			if(character.attackFrameRemaining > 0) character.attackFrameRemaining--);
+			if(character.attackFrameRemaining > 0) character.attackFrameRemaining--;
 		});
 	});
 
@@ -349,6 +344,7 @@ this.loadServerPlayers = function (players) {
 				})
 		} else {
 			var c = ninjaParty.characters[i] ;
+			c.toBeReseted = false ;
 			if (ninjaParty.showFrequentDebug) console.log("previous position = " + c.x + " , " + c.y ) ;
 			if (ninjaParty.showFrequentDebug) console.log("new position = " + data.x + " , " + data.y ) ;
 			c.x = data.x - ninjaParty.playerWidth / 4 ;
@@ -357,6 +353,11 @@ this.loadServerPlayers = function (players) {
 			c.state = data.state ;
 			c.updateDirectionAnimation();
 		}
+		ninjaParty.characters.forEach( function (c,i) {
+			if (c.toBeReseted) {
+				ninjaParty.resetCharacter(i);
+			}
+		});
 		// if (i != ninjaParty.playerId) 
 		ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
