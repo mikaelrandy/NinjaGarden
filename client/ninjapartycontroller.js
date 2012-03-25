@@ -10,12 +10,13 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	this.messages = {
 		'connect.awaiting' : "Range ton sabre, tu n'es toujours pas connecté...",
 		'game.awaiting' : "Prépare ton sabre, on attend la partie...",
-		'game.cannot_join' : "Ninja de pacotille, pas même capable de rejoindre la partie... <a href='#' onclick='ctrl.resetGame()'>vires tout le monde d'ici pour prendre la place</a> ou <a href=''>sors de la salle de reviens dicrètement</a>",
+		'game.cannot_join' : "Ninja de pacotille, pas même capable de rejoindre la partie... <a href='' onclick='ctrl.resetGame()'>virer tout le monde d'ici pour prendre la place ?</a>",
 		'game.start' : "Sors ton sabre ! maintenant !!!",
 		'engine.start': "Les sabres ont été distribués, patience...",
 		'game.ready': "Sabre au fourreau, tout le monde est prêt ?",
 		'map.init': "On vient de vous donner un joli sabre, en attendant la suite",
 		'game.end.win': "<b>Victoire !!<b> <a href=''>nouvelle partie ?</a>",
+		'game.reset': "Un ninja a subtilement remis à zéro la partie <a href=''>recommencer ?</a>",
 		'game.end.loose': "<b>C'est mort pour vous, la partie est finie :(</b> <a href=''>nouvelle partie ?</a>"
 	} ;
 
@@ -54,6 +55,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		socket.on('game.ready', this.game__ready) ;
 		socket.on('map.init', this.map__init) ;
 		socket.on('game.end', this.game__end) ;
+		socket.on('game.reset', this.game__reset) ;
 		this.displayFeedback(this.messages['connect.awaiting']) ;
 	}
 
@@ -87,6 +89,11 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		ninjaPartyController.ninjaParty.prepareGame(data);
 	}
 
+	this.game__reset = function (data) {
+		if (ninjaPartyController.showDebug) console.log("EVENT game.reset", data) ;
+		ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.reset']) ;
+	}
+
 	this.game__cannot_join = function (data) {
 		if (ninjaPartyController.showDebug) console.log("EVENT game.cannot_join", data) ;
 		ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.cannot_join']) ;
@@ -101,11 +108,13 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		if (ninjaPartyController.showDebug) console.log("EVENT game.start", data) ;
 		ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.start']) ;
 		ninjaPartyController.startGame(data);
+		ninjaParty.prepareCharactersForReset() ;
 	}
 
 	this.resetGame = function () {
 		if (this.showDebug) console.log("SENDING EVENT game.reset") ;
 		this.socket.emit('game.reset') ;
+		ninjaParty.prepareCharactersForReset() ;
 	}
 
 	this.startGame = function(data) {
