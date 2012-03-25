@@ -155,6 +155,11 @@ this.loadCraftyCharacterComponent = function () {
 			// TODO - sound
 			// TODO - change sprite for some milliseconds
 		}
+
+		stunned: function () {
+			// TODO - sound
+			// TODO - change sprite for some milliseconds
+		}
 		// TODO : other events and actions (sounds and sprite changes)
 	})
 };
@@ -250,7 +255,6 @@ this.loadServerPlayers = function (players) {
 			var c = ninjaParty.characters[i] ;
 			console.log("previous position = " + c.x + " , " + c.y ) ;
 			console.log("new position = " + data.x + " , " + data.y ) ;
-			c.isAt(data.x, data.y);
 			c.x = data.x ;
 			c.y = data.y ;
 			if (i != ninjaParty.playerId) c.direction = data.direction ;
@@ -348,11 +352,13 @@ this.cheatAndFindOwnPlayer = function() {
 
 this.attack = function () {
 	if (this.showDebug) console.log("Attack ! (from me)") ;	
+	this.sendStatusToServer(this.Events.ATTACK);
 	// TODO? if (this.player) this.player.attack() ;
 };
 
 this.smoke = function () {
-	if (this.showDebug) console.log("Smoke ! (from me)") ;	
+	if (this.showDebug) console.log("Smoke ! (from me)") ;
+	this.sendStatusToServer(this.Events.SMOKE);	
 	// TODO? if (this.player) this.player.smoke() ;
 };
 
@@ -369,6 +375,7 @@ this.sendStatusToServer = function(action) {
 this.reallySendActionToServer = function() {
 	// FAKE : do not touch, 
 	// will be overriden by ninjaPartyController#sendActionToServer
+	if (this.showDebug) console.log("WHAT ? not server to send our actions to") ;
 }
 
 this.getSteps = function(t, f) {

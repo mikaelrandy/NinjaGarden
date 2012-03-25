@@ -33,7 +33,8 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	}
 
 	this.sendActionToServer = function (data) {
-		// TODO : this.socket.emit('player.action', data);
+		if (ninjaPartyController.showDebug) console.log("EVENT player.action", data) ;
+		this.socket.emit('player.action', data);
 	}
 
 	this.initSocket = function(socket) {
@@ -56,7 +57,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	}
 
 	this.map__update = function (data) {
-		if (ninjaPartyController.showDebug) console.log("EVENT game.update", data) ;
+		//if (ninjaPartyController.showDebug) console.log("EVENT game.update", data) ;
 		ninjaPartyController.ninjaParty.loadServerFrame(data);
 	}
 
