@@ -72,6 +72,11 @@ this.sprites = {
 		tile: 40,
 		file: "images/sprites/ninja.png",
 		data: { Ninja: [0,3] }
+	},
+	pillar: {
+		tile: 16,
+		file: "images/sprites/garden.png",
+		data: { PillarSprite: [0,1,1,2] }
 	}
 }
 
@@ -112,8 +117,11 @@ this.resetCharacter = function(i) {
 
 this.loadSprites = function() {
 	// temp sprite, waiting designer
-	var ninja = this.sprites.ninja;
+	var ninja 	= this.sprites.ninja;
+	var pillar 	= this.sprites.pillar;
+
 	Crafty.sprite(ninja.tile, ninja.file, ninja.data);
+	Crafty.sprite(pillar.tile, pillar.file, pillar.data);
 };
 
 this.loadCraftyPillarComponent = function() {
@@ -121,8 +129,7 @@ this.loadCraftyPillarComponent = function() {
 	Crafty.c("Pillar", {
 		init: function() {
 			// bas haut droite gauche
-			this.addComponent("2D, "+renderingMode+", Color");
-			this.color('rgb(200,200,200)');
+			this.addComponent("2D, "+renderingMode+", PillarSprite, SpriteAnimation");
 			// TODO - add beautiful sprite
 		},
 		highlight: function () {
@@ -396,11 +403,7 @@ this.loadServerPlayers = function (players) {
 		ninjaParty.characters[i].changeState(data.state) ;
 		data.events.forEach( function (event, j) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
-			else if (event == Events.ATTACK)
-			{
-				console.log('attack response');
-				ninjaParty.characters[i].attack();
-			}
+			else if (event == Events.ATTACK) ninjaParty.characters[i].attack();
 			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
 			// else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
 			// else if (event == Events.KILLED) ninjaParty.characters[i].killed();
@@ -561,7 +564,6 @@ this.setPillar = function(index, data) {
 						h: data.h
 				});
 	this.pillars[index] = pillar ;
-	if (this.showDebug) console.log("new pillar "+i+" on "+data.x+","+data.y) ;
 };
 
 this.endGame = function(data) {
