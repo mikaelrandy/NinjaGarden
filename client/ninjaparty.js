@@ -65,7 +65,8 @@ this.predictiveEngine = false; // OFF if all movements are from server
 this.sounds = { 
 	open: "start2.wav" ,
 	tambour: "start.wav",
-	pillar: "start2.wav"
+	pillar: "start2.wav",
+	hit: "hit.wav"
 };
 this.sprites = {
 	ninja: {
@@ -214,7 +215,7 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		
 		attack: function () {
-
+			Crafty.audio.play("hit");
 			this.attackFrameRemaining = ninjaParty.attackFrameNumber;
 
 			if (this.direction & Compass.N) {
