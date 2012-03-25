@@ -147,7 +147,7 @@ Director.prototype = {
 				diffX = ninja.character.x - x,
 				diffY = ninja.character.y - y;
 			if(ninja.character.canPlay() && diffX * diffX + diffY * diffY <= cmpMaxDist) {
-				found[minja.id] = ninja; 
+				found[ninja.id] = ninja; 
 			}
 		}
 
