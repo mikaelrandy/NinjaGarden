@@ -142,8 +142,9 @@ Director.prototype = {
 	computeSmokeAction: function(ninja, decision) {
 		ninja.character.state = null;	// a l'arret
 		
-		if(ninja.character.stats.smokesLeft > 0) {
+		if(ninja.character.stats.smokesLeft > 0 && new Date().getTime() - ninja.character.stats.lastSmoke > Config.Times.DELAY_BETWEEN_SMOKE * 1000) {
 			ninja.character.stats.smokesLeft--;
+			ninja.character.stats.lastSmoke = new Date().getTime();
 			ninja.character.addEvent(Config.Events.SMOKE);
 		}
 	},

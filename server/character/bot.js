@@ -41,7 +41,7 @@ Bot.prototype = {
 		}
 
 		// faint stunned state
-		if(Utils.rand(500) == 1) {
+		if(Utils.rand(100) == 1) {
 			this.character.isStunned();
 			return;
 		}
