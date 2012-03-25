@@ -79,10 +79,11 @@ io.sockets.on('connection', function(socket) {
     
     // Send initial map state
     var pillars = [];
-    for(var i = 0; i < game.map.pillars; i++) {
+    for(var i = 0; i < game.map.pillars.length; i++) {
         pillar = game.map.pillars[i];
         pillars.push({'x': pillar.x, 'y': pillar.y, 'h': config.Dists.PILLAR_HEIGHT, 'w': config.Dists.PILLAR_WIDTH});
     }
+
     socket.emit('map.init', {
         config: {
             maps: {
