@@ -382,6 +382,7 @@ this.loadServerPlayers = function (players) {
 				.attr( { 
 						x: data.x - ninjaParty.playerWidth / 4, 
 						y: data.y - ninjaParty.playerHeight / 4, 
+						z: data.y - ninjaParty.playerHeight / 4, 
 						w: ninjaParty.playerWidth, 
 						h: ninjaParty.playerHeight, 
 						direction: data.direction, 
@@ -395,6 +396,7 @@ this.loadServerPlayers = function (players) {
 			if (ninjaParty.showFrequentDebug) console.log("new position = " + data.x + " , " + data.y ) ;
 			c.x = data.x - ninjaParty.playerWidth / 4 ;
 			c.y = data.y - ninjaParty.playerHeight / 4 ;
+			c.z = data.y - ninjaParty.playerHeight / 4 ;
 			c.direction = data.direction ;
 			if (i == ninjaParty.playerId) {
 				ninjaParty.currentRealDir = data.direction ;
@@ -571,7 +573,8 @@ this.setPillar = function(index, data) {
 						x: data.x, 
 						y: data.y, 
 						w: data.w, 
-						h: data.h
+						h: data.h,
+						z: data.y
 				});
 	this.pillars[index] = pillar ;
 };
