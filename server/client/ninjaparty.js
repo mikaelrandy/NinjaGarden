@@ -24,11 +24,11 @@ this.Keys = {
 
 // Config actions
 this.allowCheat = true;
-this.allowPlayerStop = true; // change to allow user to stop
+this.allowPlayerStop = false; // change to allow user to stop
 this.persistKeys = false;
 this.autoMove = false;
 this.startWithAutoMove = false; 
-this.showDebug = false;
+this.showDebug = true;
 this.showFrequentDebug = false;
 this.currentDir = 0;
 this.currentRealDir = 0;
@@ -42,7 +42,6 @@ this.pillars = [ ];
 
 // vitesse de jeu
 this.millisecondForAStep = 25;
-this.attackFrameNumber = 20;
 this.remainingMilliseconds = 0;
 this.lastStepTime = null;
 
@@ -131,7 +130,6 @@ this.loadCraftyPillarComponent = function() {
 };
 
 this.loadCraftyCharacterComponent = function () {
-	var attacking = false;
 	var States = this.States;
 	var Compass = this.Compass;
 	var renderingMode = this.renderingMode;
@@ -148,7 +146,7 @@ this.loadCraftyCharacterComponent = function () {
 			else if ((this.direction & Compass.S) && this.y >= mapHeight - playerHeight) this.direction = this.direction - Compass.S + Compass.N ;
 			if ((this.direction & Compass.W) && this.x <= 0) this.direction = this.direction - Compass.W + Compass.E ;
 			else if ((this.direction & Compass.E) && this.x >= mapWidth - playerWidth) this.direction = this.direction - Compass.E + Compass.W ;
-			this.updateDirectionAnimation();
+			this.updateAnimation();
 		},
 		continueMove: function(step) {
 			if (this.direction & Compass.N) this.y -= step ;
@@ -163,26 +161,22 @@ this.loadCraftyCharacterComponent = function () {
 				.animate("walk_up", 0, 1, 2)
 				.animate("walk_right", 0, 2, 2)
 				.animate("walk_left", 0, 3, 2)
-				.animate("attack_down", 0, 4, 2)
-				.animate("attack_up", 0, 5, 2)
-				.animate("attack_right", 0, 6, 2)
-				.animate("attack_left", 0, 7, 2);
 			;
 		},
 		changeDirection: function (newdir) {
 			this.direction = newdir;
-			this.updateDirectionAnimation();
+			this.updateAnimation();
 		},
-		updateDirectionAnimation: function()
+		updateAnimation: function()
 		{
 			if (this.direction & Compass.N) {
-				if (!this.isPlaying('attack_up'))	this.stop().animate("attack_up", 30, -1);
+				if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 15, -1);
 			} else if (this.direction & Compass.S) {
-				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 30, -1);
+				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 15, -1);
 			} else if (this.direction & Compass.W) {		
-				if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 30, -1);
+				if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 15, -1);
 			} else if (this.direction & Compass.E) {
-				if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 30, -1);
+				if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 15, -1);
 			} else {
 				this.stop();
 			}
@@ -194,21 +188,6 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		
 		attack: function () {
-
-console.log(ninjaPartyController.ninjaParty);
-			this.attackFrameRemaining = ninjaPartyController.ninjaParty.attackFrameNumber;
-
-			if (this.direction & Compass.N) {
-				if (!this.isPlaying('attack_up')) this.stop().animate("attack_up", 30, 2);
-			} else if (this.direction & Compass.S) {
-				if (!this.isPlaying('attack_down')) this.stop().animate("attack_down", 30, 2);
-			} else if (this.direction & Compass.W) {		
-				if (!this.isPlaying('attack_left')) this.stop().animate("attack_left", 30, 2);
-			} else if (this.direction & Compass.E) {
-				if (!this.isPlaying('attack_right')) this.stop().animate("attack_right", 30, 2);
-			} else {
-				this.stop();
-			}
 			// TODO - sound
 			// TODO - change sprite for some milliseconds
 		},
@@ -264,9 +243,6 @@ this.loadEngineBindings = function () {
 					c.bounce(); 
 					c.continueMove(steps, f); 
 				} 
-				if(c.attacking) {
-
-				}
 			} );
 		}
 		if (ninjaParty.showFps && ((f % ninjaParty.fpsCounter) == 0)) ninjaParty.countFPS(t);
@@ -344,7 +320,7 @@ this.loadServerPlayers = function (players) {
 			c.y = data.y ;
 			c.direction = data.direction ;
 			c.state = data.state ;
-			c.updateDirectionAnimation();
+			c.updateAnimation();
 		}
 		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
@@ -367,7 +343,9 @@ this.countFPS = function (t) {
 
 this.getInputForInstantDirection = function  () {
 	var madir = 0 ;
-	if (!!Crafty.keydown[this.Keys.N]) madir += this.Compass.N ;
+	if (!!Crafty.keydown[this.Keys.N]) {
+		madir += this.Compass.N ;
+	}
 	else if (!!Crafty.keydown[this.Keys.S]) madir += this.Compass.S ;
 	if (!!Crafty.keydown[this.Keys.E]) madir += this.Compass.E ;
 	else if (!!Crafty.keydown[this.Keys.W]) madir += this.Compass.W ;
@@ -384,15 +362,14 @@ this.changeDirection = function (direction) {
 	if (!direction && this.autoMove) return ; //console.log("still autoMove"); ;
 	this.autoMove = false;
 	if (this.showDebug) {
-		//console.log("new direction '"+direction+"' (old was '"+this.currentDir+"')")
+		console.log("new direction '"+direction+"' (old was '"+this.currentDir+"')")
 	}
 	this.currentDir = direction ;
 	if (direction) {
 		this.currentRealDir = direction;
 		this.currentState = this.States.MOVING ;
-	} else {
-		this.currentState = this.currentState & (~this.States.MOVING) ;
 	}
+	if (!direction) this.currentState = 0 ;
 	if (this.player && this.predictiveEngine) this.player.changeDirection(direction) ;
 	this.sendStatusToServer();
 };
@@ -452,10 +429,10 @@ this.cheatAndFindOwnPlayer = function() {
 		this.player.cheated = false;
 	} else {
 		this.player.addComponent("Color");
-		this.player.color('rgb(255,0,0)');
-		if (this.showDebug) console.log("CHEATING, my player is in red");
+		this.player.color('rgba(255,0,0,64)');
 		this.player.cheated = true;
 	}
+	if (this.showDebug) console.log("CHEATING, my player is in red");
 };
 
 this.attack = function () {
@@ -507,10 +484,9 @@ this.setPillar = function(index, data) {
 };
 
 this.endGame = function(data) {
-	var States = this.States ;
 	this.characters.forEach(function(c,i) {
 		if (!c) return ;
-		c.state = c.state  & (~ States.MOVING) ;
+		c.state = c.state  & (~this.States.MOVING) ;
 	});
 	this.predictiveEngine = false;
 	this.isEndWithTimeout = data.end.timeout ;

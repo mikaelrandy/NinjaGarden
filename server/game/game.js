@@ -27,9 +27,8 @@ Game.prototype = {
 	},
 
 	stop: function() {
-
 		if( this.timer != null ) {
-			clearTimeout(this.timer.clear);
+			clearTimeout(this.timer);
 		}
 
 		if(this.state == this.config.gameStates.STARTED)	{
@@ -159,15 +158,16 @@ Game.prototype = {
 		return this.gameEndTime == 0 ? 0 : this.gameEndTime - new Date().getTime();
 	},
 	// called by the directort (likely if a player got all pillars)
-	notifyWinner: function(winnerPlayer, isKillerWin) {
+	notifyWinner: function(winnerPlayer, isKillerWin, isPillarWin) {
 		this.stop();
 		var frameDatas = this.getCurrentDatas();
 		frameDatas['end'] = {
 			'timeout' : false,
-			'winner'  : winnerPlayer.character.id,
-			'isKillerWin' : isKillerWin
+			'isKillerWin' : isKillerWin,
+			'isPillarWin': 	isPillarWin,
+			'winner'  : winnerPlayer.character.id
 		}
-        Utils.emitAll(this.socket, 'map.end', frameDatas);
+        Utils.emitAll(this.socket, 'game.end', frameDatas);
 	},
 	// called once time has expired
 	notifyTimeOver: function() {
@@ -175,10 +175,11 @@ Game.prototype = {
 		var frameDatas = this.getCurrentDatas();
 		frameDatas['end'] = {
 			'timeout' : true,
-			'winner'  : false,
-			'isKillerWin' : false
+			'isKillerWin' : false,
+			'isPillarWin': 	false,
+			'winner'  : false
 		}
-        Utils.emitAll(this.socket, 'map.end', frameDatas);
+        Utils.emitAll(this.socket, 'game.end', frameDatas);
 	},
 
 	notifyPlayerAction: function(player, actionData) {
