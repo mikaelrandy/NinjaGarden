@@ -8,7 +8,11 @@
 		<script src="ninjaparty.js"></script>
 		<script src="ninjapartycontroller.js"></script>
 		<script src="ninja-fakeinit.js"></script>
-		<script src="http://192.168.1.60:1337/socket.io/socket.io.js"></script>
+		<script src="http://192.168.1.68:1337/socket.io/socket.io.js"></script>
+		<style>
+			html, body {text-align: center; background: #DDD;}
+			#cr-stage { border: solid #333 1px; outline: solid #555 2px; width: 400px; height: 288px; margin: 0 auto; backgroud:; #999;}
+		</style>
 	</head>
 
 	<body>
@@ -27,7 +31,7 @@
 				}
 				setTimeout(function() {
 					console.log("onload");
-					var socket = io.connect('http://192.168.1.60:1337')  ;
+					var socket = io.connect('http://192.168.1.68:1337')  ;
 					ctrl.initSocket( socket ) ;
 				}, 500);
 			}
