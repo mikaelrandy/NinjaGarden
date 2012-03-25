@@ -164,6 +164,8 @@ this.loadCraftyCharacterComponent = function () {
 				.animate("walk_up", 0, 1, 2)
 				.animate("walk_right", 0, 2, 2)
 				.animate("walk_left", 0, 3, 2)
+				.animate("stunned_left", 0, 8, 0)
+				.animate("stunned_right", 1, 8, 1)
 				.animate("attack_down", 0, 4, 2)
 				.animate("attack_up", 0, 5, 2)
 				.animate("attack_right", 0, 6, 2)
@@ -224,13 +226,23 @@ this.loadCraftyCharacterComponent = function () {
 		},
 
 		stunned: function () {
-			// TODO - sound
-			// TODO - change sprite for some milliseconds
+			if (this.direction & Compass.W) {		
+				if (!this.isPlaying('stunned_right')) this.stop().animate("stunned_right", 15, 0);
+			} else if (this.direction) {
+				if (!this.isPlaying('stunned_left')) this.stop().animate("stunned_left", 15, 0);
+			} else {
+				this.stop();
+			}
 		},
 
 		killed: function() {
-			// TODO - sound
-			// TODO - change sprite for some milliseconds
+			if (this.direction & Compass.W) {		
+				if (!this.isPlaying('stunned_right')) this.stop().animate("stunned_right", 15, 0);
+			} else if (this.direction) {
+				if (!this.isPlaying('stunned_left')) this.stop().animate("stunned_left", 15, 0);
+			} else {
+				this.stop();
+			}
 		},
 
 		onPillar: function() {
