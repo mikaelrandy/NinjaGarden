@@ -36,6 +36,7 @@ Player.prototype = {
 		if(decision.isEvent()) {
 			this.character.decisionStack = [
 				newDecisionEntry,
+				// add current movement after
 				{
 					'decision' : new Decision(this.character.state, this.character.dir, 0),
 					'duration' : 1
