@@ -65,6 +65,7 @@ this.predictiveEngine = false; // OFF if all movements are from server
 this.sounds = { 
 	open: "start2.wav" ,
 	tambour: "start.wav",
+	pillar: "start2.wav"
 };
 this.sprites = {
 	ninja: {
@@ -198,7 +199,11 @@ this.loadCraftyCharacterComponent = function () {
 
 		changeState: function (newstate) {
 			this.state = newstate ;
-			// TODO - change sprite if moving / not moving / stunned / dead ?
+			if (this.state == States.STUNNED) {
+				this.stunned();
+			} else if (this.state == States.DEAD) {
+				this.killed();
+			}
 		},
 		
 		attack: function () {
@@ -397,8 +402,8 @@ this.loadServerPlayers = function (players) {
 				ninjaParty.characters[i].attack();
 			}
 			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
-			else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
-			else if (event == Events.KILLED) ninjaParty.characters[i].killed();
+			// else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
+			// else if (event == Events.KILLED) ninjaParty.characters[i].killed();
 			else if (event == Events.ON_PILLAR) ninjaParty.characters[i].onPillar();
 		}) ;
 	} ;
@@ -560,6 +565,7 @@ this.setPillar = function(index, data) {
 };
 
 this.endGame = function(data) {
+	var States = this.States;
 	// no ninja is moving anymore
 	var States = this.States;
 	this.characters.forEach(function(c,i) {
@@ -567,12 +573,6 @@ this.endGame = function(data) {
 		c.state = c.state  & (~States.MOVING) ;
 	});
 	this.predictiveEngine = false;
-	// TODO - set if player has win
-};
-
-this.hasPlayerWin = function () {
-	// TODO - check if player win
-	return null;
 };
 
 }
