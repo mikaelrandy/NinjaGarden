@@ -6,7 +6,7 @@ Decision = function(state, dir, evt) {
 
 Decision.prototype = {
 	isEvent: function() {
-		return this.evt == undefined;
+		return this.evt > 0;
 	}
 }
 

@@ -339,8 +339,8 @@ this.loadServerPlayers = function (players) {
 		if (! ninjaParty.characters[i]) {
 			ninjaParty.characters[i] = Crafty.e("Character")
 				.attr( { 
-						x: data.x, 
-						y: data.y, 
+						x: data.x - ninjaParty.playerWidth / 4, 
+						y: data.y - ninjaParty.playerHeight / 4, 
 						w: ninjaParty.playerWidth, 
 						h: ninjaParty.playerHeight, 
 						direction: data.direction, 
@@ -350,13 +350,14 @@ this.loadServerPlayers = function (players) {
 			var c = ninjaParty.characters[i] ;
 			if (ninjaParty.showFrequentDebug) console.log("previous position = " + c.x + " , " + c.y ) ;
 			if (ninjaParty.showFrequentDebug) console.log("new position = " + data.x + " , " + data.y ) ;
-			c.x = data.x ;
-			c.y = data.y ;
+			c.x = data.x - ninjaParty.playerWidth / 4 ;
+			c.y = data.y - ninjaParty.playerHeight / 4 ;
 			c.direction = data.direction ;
 			c.state = data.state ;
 			c.updateDirectionAnimation();
 		}
-		if (i != ninjaParty.playerId) ninjaParty.characters[i].changeDirection(data.direction) ;
+		// if (i != ninjaParty.playerId) 
+		ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
 		data.events.forEach( function (event, j) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
@@ -396,9 +397,7 @@ this.changeDirection = function (direction) {
 	if (!direction && !this.allowPlayerStop) return ; //console.log("do not allow player stop");
 	if (!direction && this.autoMove) return ; //console.log("still autoMove"); ;
 	this.autoMove = false;
-	if (this.showDebug) {
-		//console.log("new direction '"+direction+"' (old was '"+this.currentDir+"')")
-	}
+	if (this.showFrequentDebug) console.log("new direction '"+direction+"' (old was '"+this.currentDir+"')") ;
 	this.currentDir = direction ;
 	if (direction) {
 		this.currentRealDir = direction;
