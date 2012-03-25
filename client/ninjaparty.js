@@ -86,7 +86,6 @@ this.initEngine = function() {
 		this.loadCraftyCharacterComponent();
 		this.loadCraftyPillarComponent();
 	}
-	this.characters.forEach( function (c) { c.toBeReseted = true ; c.x = -100 ; c.y = -100; });
 	this.initialized = true;
 };
 
@@ -254,6 +253,8 @@ this.prepareGame = function (data) {
 
 this.initGame = function () {
 	this.remainingMilliseconds = 0;
+	this.characters.forEach( function (c) { c.toBeReseted = true ; c.x = -100 ; c.y = -100; });
+	this.player = null ;
 	this.lastStepTime = this.fpsTimer = this.startedTime = (new Date()).getTime() ;
 	console.log("play !");
 	Crafty.audio.play("open");
