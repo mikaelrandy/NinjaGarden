@@ -28,7 +28,7 @@ this.allowPlayerStop = false; // change to allow user to stop
 this.persistKeys = false;
 this.autoMove = false;
 this.startWithAutoMove = true; 
-this.showDebug = true;
+this.showDebug = false;
 this.showFrequentDebug = false;
 this.currentDir = 0;
 this.currentRealDir = 0;
@@ -138,6 +138,10 @@ this.loadCraftyCharacterComponent = function () {
 				.animate("walk_up", 0, 1, 2)
 				.animate("walk_right", 0, 2, 2)
 				.animate("walk_left", 0, 3, 2)
+				.animate("attack_down", 0, 4, 2)
+				.animate("attack_up", 0, 5, 2)
+				.animate("attack_right", 0, 6, 2)
+				.animate("attack_left", 0, 7, 2);
 			;
 		},
 		changeDirection: function (newdir) {
@@ -147,13 +151,13 @@ this.loadCraftyCharacterComponent = function () {
 		updateAnimation: function()
 		{
 			if (this.direction & Compass.N) {
-				if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 15, -1);
+				if (!this.isPlaying('walk_up'))	this.stop().animate("walk_up", 30, -1);
 			} else if (this.direction & Compass.S) {
-				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 15, -1);
+				if (!this.isPlaying('walk_down')) this.stop().animate("walk_down", 30, -1);
 			} else if (this.direction & Compass.W) {		
-				if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 15, -1);
+				if (!this.isPlaying('walk_left')) this.stop().animate("walk_left", 30, -1);
 			} else if (this.direction & Compass.E) {
-				if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 15, -1);
+				if (!this.isPlaying('walk_right')) this.stop().animate("walk_right", 30, -1);
 			} else {
 				this.stop();
 			}
@@ -165,6 +169,20 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		
 		attack: function () {
+
+console.log('attack, tulipes');
+
+			if (this.direction & Compass.N) {
+				if (!this.isPlaying('attack_up'))	this.stop().animate("attack_up", 10, 1);
+			} else if (this.direction & Compass.S) {
+				if (!this.isPlaying('attack_down')) this.stop().animate("attack_down", 10, 1);
+			} else if (this.direction & Compass.W) {		
+				if (!this.isPlaying('attack_left')) this.stop().animate("attack_left", 10, 1);
+			} else if (this.direction & Compass.E) {
+				if (!this.isPlaying('attack_right')) this.stop().animate("attack_right", 10, 1);
+			} else {
+				this.stop();
+			}
 			// TODO - sound
 			// TODO - change sprite for some milliseconds
 		},
