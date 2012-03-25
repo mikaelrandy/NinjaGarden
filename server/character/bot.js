@@ -9,15 +9,22 @@ Bot.prototype = {
 		// nothing yet
 	},
 	getNextDecision: function() {
-		var timedDecision;
+		var timedDecision, realDirToUse = -1;
 
 		// fill stack if needed
 		if(this.character.decisionStack.length == 0) {
 			this.generateNewDecision();
+		} else {
+			realDirToUse = this.character.dir;
 		}
 
 		var timedDecision = this.character.decisionStack[0];
 		timedDecision.duration--;
+
+		// fix bounce
+		if(realDirToUse >= 0) {
+			timedDecision.decision.dir = realDirToUse;
+		}
 
 
 		// remove finished decision from the stack
