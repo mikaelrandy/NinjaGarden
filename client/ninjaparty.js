@@ -30,6 +30,8 @@ this.autoMove = false;
 this.startWithAutoMove = true;
 this.showDebug = true;
 this.currentDir = 0;
+this.currentRealDir = 0;
+this.currentState = 0;
 
 // Liste des personnages à l'écran
 this.characters = [ ];
@@ -278,7 +280,13 @@ this.changeDirection = function (direction) {
 		console.log("new direction '"+direction+"' (old was '"+((!this.player) ? 'unknown' : this.player.direction)+"')")
 	}
 	this.currentDir = direction ;
+	if (direction) {
+		this.currentRealDir = direction;
+		this.currentState = this.States.MOVING ;
+	}
+	if (!direction) this.currentState = 0 ;
 	if (this.player) this.player.changeDirection(direction) ;
+	this.sendStatusToServer();
 };
 
 this.getInputForPersistantDirection = function (key) {
@@ -340,6 +348,15 @@ this.smoke = function () {
 	if (this.player) this.player.smoke() ;
 };
 
+this.sendStatusToServer = function(action) {
+	action = action || 0 ;
+	this.sendActionToServer({
+		direction: this.currentRealDir ,
+		state: this.currentState ,
+		action: action
+	}) ;
+
+}
 this.sendActionToServer = function() {
 
 }
