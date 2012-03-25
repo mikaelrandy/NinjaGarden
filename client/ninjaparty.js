@@ -305,8 +305,8 @@ this.loadServerPlayers = function (players) {
 		if (! ninjaParty.characters[i]) {
 			ninjaParty.characters[i] = Crafty.e("Character")
 				.attr( { 
-						x: data.x, 
-						y: data.y, 
+						x: data.x - ninjaParty.playerWidth / 2, 
+						y: data.y - ninjaParty.playerHeight / 2, 
 						w: ninjaParty.playerWidth, 
 						h: ninjaParty.playerHeight, 
 						direction: data.direction, 
@@ -316,8 +316,8 @@ this.loadServerPlayers = function (players) {
 			var c = ninjaParty.characters[i] ;
 			if (ninjaParty.showFrequentDebug) console.log("previous position = " + c.x + " , " + c.y ) ;
 			if (ninjaParty.showFrequentDebug) console.log("new position = " + data.x + " , " + data.y ) ;
-			c.x = data.x ;
-			c.y = data.y ;
+			c.x = data.x - ninjaParty.playerWidth / 2 ;
+			c.y = data.y - ninjaParty.playerHeight / 2 ;
 			c.direction = data.direction ;
 			c.state = data.state ;
 			c.updateAnimation();
