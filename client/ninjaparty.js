@@ -278,7 +278,7 @@ this.loadEngineBindings = function () {
 		// decrease frame actions number
 		ninjaParty.characters.forEach( function(character) {
 			// attack
-			if(character.attackFrameRemaining > 0) character.attackFrameRemaining--);
+			if(character.attackFrameRemaining > 0) character.attackFrameRemaining--;
 		});
 	});
 
