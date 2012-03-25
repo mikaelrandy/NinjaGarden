@@ -22,6 +22,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		'game.end.win.killer': "<b>Victoire !!<b> Vous avez tué le dernier ninja caché ! <a href=''>nouvelle partie ?</a>",
 		'game.reset': "Un ninja a subtilement remis à zéro la partie <a href=''>recommencer ?</a>",
 		'game.end.loose': "<b>C'est mort pour vous, la partie est finie :(</b> <a href=''>nouvelle partie ?</a>",
+		'game.end.loose.dead': "<b>Avec un sabre dans l'estomac, on avance moins vite. Vous êtes mort mais la partie continue.",
 		'game.end.timeout': "<b>C'est mort pour vous, le temps est écoulé :(</b> <a href=''>nouvelle partie ?</a>"
 	} ;
 
@@ -105,8 +106,14 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	}
 
 	this.map__update = function (data) {
+		var ninjaParty = ninjaPartyController.ninjaParty ;
 		if (ninjaPartyController.showFrequentDebug) console.log("EVENT game.update", data) ;
-		ninjaPartyController.ninjaParty.loadServerFrame(data);
+		ninjaParty.loadServerFrame(data);
+		if (data.ninjas && ninjaParty.player) {
+			if (ninjaParty.player.state & ninjaParty.States.DEAD) {
+				ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.loose.dead']) ;
+			}
+		} 
 	}
 
 	this.game__ready = function (data) {
