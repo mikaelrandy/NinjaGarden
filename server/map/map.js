@@ -23,7 +23,7 @@ Map.prototype = {
 			borderSpace = 50;
 
 		this.pillars.push(
-			new Pillar(parseInt(mapH / 2), parseInt(mapW / 2)),
+			new Pillar(parseInt(mapW / 2), parseInt(mapH / 2)),
 			new Pillar(borderSpace, borderSpace),
 			new Pillar(mapW - borderSpace, borderSpace),
 			new Pillar(borderSpace, mapH - borderSpace),
