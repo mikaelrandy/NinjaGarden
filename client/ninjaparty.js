@@ -203,8 +203,6 @@ this.loadCraftyCharacterComponent = function () {
 
 			this.attackFrameRemaining = ninjaPartyController.ninjaParty.attackFrameNumber;
 
-			console.log('attack : remaining : ', this.attackFrameRemaining);
-
 			if (this.direction & Compass.N) {
 				if (!this.isPlaying('attack_up')) this.stop().animate("attack_up", ninjaPartyController.ninjaParty.attackFrameNumber, 0);
 			} else if (this.direction & Compass.S) {
