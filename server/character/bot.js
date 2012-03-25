@@ -35,6 +35,11 @@ Bot.prototype = {
 		return timedDecision.decision;
 	},
 	generateNewDecision: function() {
+
+		if(this.character.state == Config.States.STUNNED) {
+			this.character.state = 0;
+		}
+
 		// faint stunned state
 		if(Utils.rand(500) == 1) {
 			this.character.isStunned();
