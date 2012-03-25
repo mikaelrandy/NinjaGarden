@@ -80,7 +80,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		}
 		else {
 			var msg = "" ;
-			if (ninjaParty.nbAlivePlayers > 1) msg += "<br><small>Il restait "+ninjaParty.nbAlivePlayers+" ninjas caché(s)</small>" ;
+			if (ninjaParty.nbAlivePlayers > 1) msg += "<br><small>Il restait "+(ninjaParty.nbAlivePlayers - 1)+" ninjas caché(s)</small>" ;
 			msg += "<br><small>Vous aviez passé "+ninjaParty.player.stats.pillarValidated+" pilier(s)</small>" ;
 			if (ninjaParty.isTimeout) {
 				ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.timeout'] + msg) ;
