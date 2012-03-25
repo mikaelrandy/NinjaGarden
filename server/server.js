@@ -71,7 +71,8 @@ io.sockets.on('connection', function(socket) {
 
     // Check if player can join the game
     var currentPlayer = new Player(new Character());
-    if( !game.addPlayer(currentPlayer) ) {
+    var isValidPlayer = game.addPlayer(currentPlayer);
+    if( !isValidPlayer ) {
         socket.emit('game.cannot_join')
         // If player cannot join, avoid all event connection
         //return false;
@@ -79,10 +80,11 @@ io.sockets.on('connection', function(socket) {
     
     // Send initial map state
     var pillars = [];
-    for(var i = 0; i < game.map.pillars; i++) {
+    for(var i = 0; i < game.map.pillars.length; i++) {
         pillar = game.map.pillars[i];
         pillars.push({'x': pillar.x, 'y': pillar.y, 'h': config.Dists.PILLAR_HEIGHT, 'w': config.Dists.PILLAR_WIDTH});
     }
+
     socket.emit('map.init', {
         config: {
             maps: {
@@ -91,7 +93,7 @@ io.sockets.on('connection', function(socket) {
                 'pillars': pillars
             },
             player: {
-                'id': currentPlayer.character.id
+                'id': isValidPlayer ? currentPlayer.character.id : -1
             }
         },
         state: []
@@ -101,10 +103,12 @@ io.sockets.on('connection', function(socket) {
     // Client is now connected, send him game state
     sendGameState(socket);
 
-    // Event on player (player.action)
-    socket.on('player.action', function(data) { 
-
-    });
+    // Event on valid player (player.action)
+    if( isValidPlayer ) {
+        socket.on('player.action', function(data) { 
+            console.log('player.action', currentPlayer, data);
+        });
+    }
 });
 
 // On client disconnection

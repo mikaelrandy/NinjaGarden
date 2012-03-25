@@ -7,6 +7,7 @@ Player = function(character, socketid) {
 
 Player.prototype = {
 	init: function() {
+		this.character.state = 0;
 	},
 	// either a player has at least one pending decision either it does nothing new
 	getNextDecision: function() {

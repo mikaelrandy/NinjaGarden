@@ -51,9 +51,7 @@ this.elapsedTime = null;
 this.endTime = null;
 
 // Graphique
-this.mapBackgroundImage = "floor.jpg";
-this.mapHeight = 640;
-this.mapWidth = 960;
+this.mapBackgroundImage = "images/sprites/room.png";
 this.playerHeight = 40;
 this.playerWidth = 40;
 this.renderingMode = "Canvas";
