@@ -126,7 +126,7 @@ Director.prototype = {
 				attackedNinja.character.addEvent(Config.Events.IS_DEAD);
 
 				if(this.getAlivePlayers().length <= 1) {
-					this.game.notifyWinner(player, true, false);
+					this.game.notifyWinner(attackedNinja, true, false);
 				}
 			} else {
 				attackedNinja.character.isStunned(); 
