@@ -3,6 +3,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	this.socket = null;
 	this.messagePlaceHolder = messagePlaceHolder;
 	this.showDebug = true;
+	this.showFrequentDebug = false;
 
 	ninjaPartyController = this ;
 
@@ -13,7 +14,9 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		'game.start' : "Sors ton sabre ! maintenant !!!",
 		'engine.start': "Les sabres ont été distribués, patience...",
 		'game.ready': "Sabre au fourreau, tout le monde est prêt ?",
-		'map.init': "On vient de vous donner un joli sabre, en attendant la suite"
+		'map.init': "On vient de vous donner un joli sabre, en attendant la suite",
+		'game.end.win': "<b>Victoire !!<b> <a href=''>nouvelle partie ?</a>",
+		'game.end.loose': "<b>C'est mort pour vous, la partie est finie :(</b> <a href=''>nouvelle partie ?</a>"
 	} ;
 
 	this.displayFeedback = function(message) {
@@ -29,6 +32,9 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		}
 		this.ninjaParty.initEngine() ;
 		this.displayFeedback(this.messages['engine.start']) ;
+		if (data.config.pillars) data.config.pillars.forEach(function (p,i) {
+			this.ninjaParty.setPillar(i, p);
+		});
 		this.initMapUpdate();
 	}
 
@@ -44,7 +50,16 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		socket.on('game.start', this.game__start) ;
 		socket.on('game.ready', this.game__ready) ;
 		socket.on('map.init', this.map__init) ;
+		socket.on('game.end', this.map__init) ;
 		this.displayFeedback(this.messages['connect.awaiting']) ;
+	}
+
+	this.game__end = function (data) {
+		if (ninjaPartyController.showDebug) console.log("EVENT game.end", data) ;
+		ninjaPartyController.endGame(data);	
+		var hasWin = ninjaPartyController.hasPlayerWin();
+		if (hasWin) ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.win']) ;
+		else ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.loose']) ;
 	}
 
 	this.initMapUpdate = function() {
@@ -57,7 +72,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	}
 
 	this.map__update = function (data) {
-		//if (ninjaPartyController.showDebug) console.log("EVENT game.update", data) ;
+		if (ninjaPartyController.showFrequentDebug) console.log("EVENT game.update", data) ;
 		ninjaPartyController.ninjaParty.loadServerFrame(data);
 	}
 

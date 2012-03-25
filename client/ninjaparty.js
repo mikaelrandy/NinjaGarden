@@ -29,6 +29,7 @@ this.persistKeys = false;
 this.autoMove = false;
 this.startWithAutoMove = true; 
 this.showDebug = true;
+this.showFrequentDebug = true;
 this.currentDir = 0;
 this.currentRealDir = 0;
 this.currentState = 0;
@@ -37,6 +38,7 @@ this.currentState = 0;
 this.characters = [ ];
 this.player = null;
 this.playerId = NaN;
+this.pillars = [ ];
 
 // vitesse de jeu
 this.millisecondForAStep = 25;
@@ -80,12 +82,28 @@ this.initEngine = function() {
 		Crafty.audio.add(i, this.sounds[i]);
 	}
 	this.loadCraftyCharacterComponent();
+	this.loadCraftyPillarComponent();
 };
 
 this.loadSprites = function() {
 	// temp sprite, waiting designer
 	var ninja = this.sprites.ninja;
 	Crafty.sprite(ninja.tile, ninja.file, ninja.data);
+};
+
+this.loadCraftyPillarComponent = function() {
+	Crafty.c("Pillar", {
+		init: function() {
+			// bas haut droite gauche
+			this.addComponent("2D, "+renderingMode+", Color");
+			this.color('rgb(200,200,200)');
+			// TODO - add beautiful sprite
+		},
+		highlight: function () {
+			// TODO - change sprite for pillar highlight
+		}, 
+	});
+
 };
 
 this.loadCraftyCharacterComponent = function () {
@@ -115,7 +133,6 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		init: function() {
 			// bas haut droite gauche
-			this.origin
 			this.addComponent("2D, "+renderingMode+", Ninja, SpriteAnimation");
 			this.animate("walk_down", 0, 0, 2)
 				.animate("walk_up", 0, 1, 2)
@@ -144,7 +161,7 @@ this.loadCraftyCharacterComponent = function () {
 
 		changeState: function (newstate) {
 			this.state = newstate ;
-			// TODO - change sprite if moving / not moving or stunned / dead ?
+			// TODO - change sprite if moving / not moving / stunned / dead ?
 		},
 		
 		attack: function () {
@@ -266,8 +283,8 @@ this.loadServerPlayers = function (players) {
 				})
 		} else {
 			var c = ninjaParty.characters[i] ;
-			// if (ninjaParty.showDebug) console.log("previous position = " + c.x + " , " + c.y ) ;
-			// if (ninjaParty.showDebug) console.log("new position = " + data.x + " , " + data.y ) ;
+			if (ninjaParty.showFrequentDebug) console.log("previous position = " + c.x + " , " + c.y ) ;
+			if (ninjaParty.showFrequentDebug) console.log("new position = " + data.x + " , " + data.y ) ;
 			c.x = data.x ;
 			c.y = data.y ;
 			if (i != ninjaParty.playerId) c.direction = data.direction ;
@@ -304,7 +321,7 @@ this.getInputForInstantDirection = function  () {
 
 
 this.changeDirection = function (direction) {
-	// TODO, maybe some debug
+	// TODO - maybe some debug
 	if (!direction && !this.allowPlayerStop) return ;
 	if (!direction && this.autoMove) return ;
 	this.autoMove = false;
@@ -383,7 +400,7 @@ this.smoke = function () {
 };
 
 this.sendStatusToServer = function(action) {
-	// TODO : debug and check with server if correct syntax
+	// TODO - debug and check with server if correct syntax
 	action = action || 0 ;
 	this.reallySendActionToServer({
 		direction: this.currentRealDir ,
@@ -406,6 +423,30 @@ this.getSteps = function(t, f) {
 	return steps ;
 };
 
+this.setPillar = function(index, data) {
+	var pillar = Crafty.e("Pillar")
+				.attr( { 
+						x: data.x, 
+						y: data.y, 
+						w: data.w, 
+						h: data.h
+				});
+	this.pillars[index] = pillar ;
+	if (this.showDebug) console.log("new pillar "+i+" on "+data.x+","+data.y) ;
+};
 
+this.endGame = function(data) {
+	// no ninja is moving anymore
+	this.characters.forEach(function(c,i) {
+		c.state = c.state  & (~this.States.MOVING) ;
+	});
+	this.predictiveEngine = false;
+	// TODO - set if player has win
+};
+
+this.hasPlayerWin = function () {
+	// TODO - check if player win
+	return null;
+};
 
 }
