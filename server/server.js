@@ -103,10 +103,12 @@ io.sockets.on('connection', function(socket) {
     // Client is now connected, send him game state
     sendGameState(socket);
 
-    // Event on player (player.action)
-    socket.on('player.action', function(data) { 
-
-    });
+    // Event on valid player (player.action)
+    if( isValidPlayer ) {
+        socket.on('player.action', function(data) { 
+            console.log('player.action', currentPlayer, data);
+        });
+    }
 });
 
 // On client disconnection
