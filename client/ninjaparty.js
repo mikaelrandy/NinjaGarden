@@ -375,6 +375,7 @@ this.loadServerPlayers = function (players) {
 		data.direction = data[2];
 		data.state = data[3];
 		data.events = data[4];
+		data.stats = data[5] ;
 		if (! ninjaParty.characters[i]) {
 			if (ninjaParty.showDebug) console.log("New ninja !", i);
 			ninjaParty.characters[i] = Crafty.e("Character")
@@ -401,6 +402,10 @@ this.loadServerPlayers = function (players) {
 		// if (i != ninjaParty.playerId) 
 		ninjaParty.characters[i].changeDirection(data.direction) ;
 		ninjaParty.characters[i].changeState(data.state) ;
+		ninjaParty.characters[i].stats = {
+			smokeRemaining: data.stats[0],
+			pillarValidated: data.stats[1]
+		} ;
 		data.events.forEach( function (event, j) {
 			if (event == Events.ATTACK) ninjaParty.characters[i].attack();
 			else if (event == Events.ATTACK) ninjaParty.characters[i].attack();
@@ -418,6 +423,9 @@ this.loadServerPlayers = function (players) {
 	});
 };
 
+this.getMyStats = function () {
+	return this.player.stats ;
+};
 
 this.countFPS = function (t) {
 	var elapsed = t - this.fpsTimer ;
@@ -573,6 +581,12 @@ this.endGame = function(data) {
 		c.state = c.state  & (~States.MOVING) ;
 	});
 	this.predictiveEngine = false;
+	this.isKillerWin = data.isKillerWin ;
+	this.isPillarWin = data.isPillarWin ;
+	this.isTimeout =  data.timeout  ;
+	this.hasPlayerWin = (this.playerId == data.winner) ;
+	this.PlayerWin = data.winner ;
+	this.nbAlivePlayers = data.nbAlivePlayers ;
 };
 
 }
