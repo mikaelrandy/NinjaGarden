@@ -24,7 +24,7 @@ this.Keys = {
 
 // Config actions
 this.allowCheat = true;
-this.allowPlayerStop = false; // change to allow user to stop
+this.allowPlayerStop = true; // change to allow user to stop
 this.persistKeys = false;
 this.autoMove = false;
 this.startWithAutoMove = false; 
@@ -343,9 +343,7 @@ this.countFPS = function (t) {
 
 this.getInputForInstantDirection = function  () {
 	var madir = 0 ;
-	if (!!Crafty.keydown[this.Keys.N]) {
-		madir += this.Compass.N ;
-	}
+	if (!!Crafty.keydown[this.Keys.N]) madir += this.Compass.N ;
 	else if (!!Crafty.keydown[this.Keys.S]) madir += this.Compass.S ;
 	if (!!Crafty.keydown[this.Keys.E]) madir += this.Compass.E ;
 	else if (!!Crafty.keydown[this.Keys.W]) madir += this.Compass.W ;
@@ -368,8 +366,9 @@ this.changeDirection = function (direction) {
 	if (direction) {
 		this.currentRealDir = direction;
 		this.currentState = this.States.MOVING ;
+	} else {
+		this.currentState = this.currentState & (~this.States.MOVING) ;
 	}
-	if (!direction) this.currentState = 0 ;
 	if (this.player && this.predictiveEngine) this.player.changeDirection(direction) ;
 	this.sendStatusToServer();
 };
@@ -429,10 +428,10 @@ this.cheatAndFindOwnPlayer = function() {
 		this.player.cheated = false;
 	} else {
 		this.player.addComponent("Color");
-		this.player.color('rgba(255,0,0,25)');
+		this.player.color('rgb(255,0,0)');
+		if (this.showDebug) console.log("CHEATING, my player is in red");
 		this.player.cheated = true;
 	}
-	if (this.showDebug) console.log("CHEATING, my player is in red");
 };
 
 this.attack = function () {
