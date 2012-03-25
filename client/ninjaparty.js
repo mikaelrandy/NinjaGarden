@@ -192,7 +192,11 @@ this.loadCraftyCharacterComponent = function () {
 
 		changeState: function (newstate) {
 			this.state = newstate ;
-			// TODO - change sprite if moving / not moving / stunned / dead ?
+			if (this.state == this.States.STUNNED) {
+				this.stunned();
+			} else if (this.state == this.States.DEAD) {
+				this.killed();
+			}
 		},
 		
 		attack: function () {
@@ -373,8 +377,8 @@ this.loadServerPlayers = function (players) {
 				ninjaParty.characters[i].attack();
 			}
 			else if (event == Events.SMOKE) ninjaParty.characters[i].smoke();
-			else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
-			else if (event == Events.KILLED) ninjaParty.characters[i].killed();
+			// else if (event == Events.STUNNED) ninjaParty.characters[i].stunned();
+			// else if (event == Events.KILLED) ninjaParty.characters[i].killed();
 			else if (event == Events.ON_PILLAR) ninjaParty.characters[i].onPillar();
 		}) ;
 	} ;
