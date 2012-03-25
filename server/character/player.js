@@ -7,7 +7,10 @@ Player = function(character, socketid) {
 
 Player.prototype = {
 	init: function() {
-		this.character.state = 0;
+		this.character.decisionStack.push({
+			'decision' : new Decision(this.character.state, this.character.dir, 0),
+			'duration' : 1
+		});
 	},
 	// either a player has at least one pending decision either it does nothing new
 	getNextDecision: function() {
@@ -30,11 +33,19 @@ Player.prototype = {
 	addNewDecision: function(decision) {
 		var newDecisionEntry = {
 			'decision' : decision,
-			'duration' : decision.isEvent() ? Config.Times.NB_FRAME_SEC * 3 : 1
+			'duration' : decision.isEvent() ? Config.Times.NB_FRAME_SEC * 0.5 : 1
 		}
 
 		if(decision.isEvent()) {
-			this.character.decisionStack.push(newDecisionEntry);
+			newDecisionEntry.decision.state = 0;
+			this.character.decisionStack = [
+				newDecisionEntry,
+				// add current movement after
+				{
+					'decision' : new Decision(this.character.state, this.character.dir, 0),
+					'duration' : 1
+				}
+			];
 		} else {
 			this.character.decisionStack.push(newDecisionEntry);
 		}

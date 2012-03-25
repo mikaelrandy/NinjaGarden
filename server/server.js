@@ -127,6 +127,7 @@ io.sockets.on('connection', function(socket) {
             // If game is started, kill player
             if( game.state >= config.GameStates.READY ) {
                 currentPlayer.character.isDead();
+                // TODO : stop game if just one player left
                 console.log('player killed');
             }
             // Else, just remove player from stack to free place for another one 

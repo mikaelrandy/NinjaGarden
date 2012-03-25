@@ -18,7 +18,7 @@ Director.prototype = {
 		for(var i=0; i < this.ninjaStack.length; i++) {
 			var ninja = this.ninjaStack[i];
 			// do not process characters that can't move
-			if(!ninja.character.canPlay()) {
+			if(ninja.type == 'player' && !ninja.character.canPlay()) {
 				continue;
 			}
 
@@ -81,7 +81,7 @@ Director.prototype = {
 					// we have a winner!
 					if(player.character.stats.pillars.length == this.game.map.pillars.length) {
 						player.character.addEvent(Config.Events.WIN);
-						this.game.notifyWinner(player, false);
+						this.game.notifyWinner(player, false, false);
 					}
 				}
 			}
@@ -126,7 +126,7 @@ Director.prototype = {
 				attackedNinja.character.addEvent(Config.Events.IS_DEAD);
 
 				if(this.getAlivePlayers().length <= 1) {
-					this.game.notifyWinner(player, true);
+					this.game.notifyWinner(attackedNinja, true, false);
 				}
 			} else {
 				attackedNinja.character.isStunned(); 

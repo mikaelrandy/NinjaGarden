@@ -24,19 +24,17 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 	}
 
 	this.initGame = function (data) {
-		var ninjaParty ;
-		ninjaParty = this.ninjaParty = new NinjaParty() ;
-		ninjaParty.mapHeight = data.config.maps.height ;
-		ninjaParty.mapWidth = data.config.maps.width ;
-		ninjaParty.setPlayer(data.config.player);
-		ninjaParty.reallySendActionToServer = function (data) {
+		this.ninjaParty = new NinjaParty() ;
+		this.ninjaParty.mapHeight = data.config.maps.height ;
+		this.ninjaParty.mapWidth = data.config.maps.width ;
+		this.ninjaParty.setPlayer(data.config.player);
+		this.ninjaParty.reallySendActionToServer = function (data) {
 			ninjaPartyController.sendActionToServer(data) ;
 		}
-		ninjaParty.initEngine() ;
+		this.ninjaParty.initEngine() ;
 		//this.displayFeedback(this.messages['engine.start']) ;
-		data.config.maps.pillars.forEach(function (p,i) {
-			if (this.showDebug) console.log("Define pillar "+i+" with ",p) ;
-			ninjaParty.setPillar(i, p);
+		if (data.config.pillars) data.config.pillars.forEach(function (p,i) {
+			this.ninjaParty.setPillar(i, p);
 		});
 		this.initMapUpdate();
 	}
@@ -61,7 +59,7 @@ function NinjaPartyController(NinjaParty, messagePlaceHolder) {
 		if (ninjaPartyController.showDebug) console.log("EVENT game.end", data) ;
 		ninjaPartyController.ninjaParty.endGame(data);	
 		ninjaPartyController.ninjaParty.loadServerFrame(data);
-		var hasWin = ninjaPartyController.ninjaParty.hasPlayerWin();
+		var hasWin = ninjaPartyController.hasPlayerWin();
 		if (hasWin) ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.win']) ;
 		else ninjaPartyController.displayFeedback(ninjaPartyController.messages['game.end.loose']) ;
 	}
