@@ -78,6 +78,11 @@ this.sprites = {
 		tile: 16,
 		file: "images/sprites/garden.png",
 		data: { PillarSprite: [0,1,1,2] }
+	},
+	smoke: {
+		tile: 120,
+		file: "images/sprites/smoke.png",
+		data: { SmokeSprite: [0,0] }
 	}
 }
 
@@ -93,6 +98,7 @@ this.initEngine = function() {
 		}
 		this.loadCraftyCharacterComponent();
 		this.loadCraftyPillarComponent();
+		this.loadCraftySmokeComponent();
 	}
 	
 	this.initialized = true;
@@ -120,9 +126,11 @@ this.loadSprites = function() {
 	// temp sprite, waiting designer
 	var ninja 	= this.sprites.ninja;
 	var pillar 	= this.sprites.pillar;
+	var smoke 	= this.sprites.smoke;
 
 	Crafty.sprite(ninja.tile, ninja.file, ninja.data);
 	Crafty.sprite(pillar.tile, pillar.file, pillar.data);
+	Crafty.sprite(smoke.tile, smoke.file, smoke.data);
 };
 
 this.loadCraftyPillarComponent = function() {
@@ -137,7 +145,16 @@ this.loadCraftyPillarComponent = function() {
 			// TODO - change sprite for pillar highlight
 		}, 
 	});
+};
 
+this.loadCraftySmokeComponent = function() {
+	var renderingMode = this.renderingMode;
+	Crafty.c("Smoke", {
+		init: function() {
+			this.addComponent("2D, "+renderingMode+", SmokeSprite, SpriteAnimation");
+			this.animate("explode", 0, 0, 10);
+		}
+	});
 };
 
 this.loadCraftyCharacterComponent = function () {
@@ -232,8 +249,20 @@ this.loadCraftyCharacterComponent = function () {
 		},
 		
 		smoke: function () {
+			var smokee = Crafty.e("Smoke")
+				.attr({
+						x: this.x + (this.w / 2) - 60, 
+						y: this.y + (this.h / 2) - 60, 
+						z: 10000, 
+						w: 120, 
+						h: 120
+				})
+				.timeout(function(){
+					this.destroy();
+					console.log('destroy');
+				}, 6600);
+				smokee.stop().animate("explode", 300, 0);
 			// TODO - sound
-			// TODO - change sprite for some milliseconds
 		},
 
 		stunned: function () {
